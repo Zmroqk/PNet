@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PNetLinuxService": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    }
+  }
+}
