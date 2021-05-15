@@ -168,9 +168,14 @@ namespace PNetDll
             }
             else
             {
+                if (lastIndex < currentIndex)
+                {
+                    ActualPing = timeout;
+                    lastIndex = currentIndex;
+                }
                 connectionErrors++;
             }
-            PacketLoss = PacketsReceived / PacketLoss;
+            PacketLoss = 100 - (PacketsReceived / (float)PacketsSend) * 100;
             lock (lastPings)
             {
                 lastPings.Add(pingReply.RoundtripTime);
@@ -190,6 +195,10 @@ namespace PNetDll
             }
             PingData pingData = new PingData()
             {
+                DateTime = DateTime.Now.AddMilliseconds(-pingReply.RoundtripTime),
+                IPAddress = iPAddress,
+                IPAddressString = iPAddress.ToString(),
+                Hostname = Hostname,
                 Index = index,
                 Ping = pingReply.RoundtripTime,
                 Success = pingReply.Status == IPStatus.Success,
@@ -201,6 +210,13 @@ namespace PNetDll
         void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override string ToString()
+        {
+            return $"Test for: {iPAddress, -20}, {Hostname}\n" +
+                $"Actual ping: {ActualPing, -5} Average ping: {AveragePing, -5} Max ping: {MaxPing, -5}\n" +
+                $"Packets send: {PacketsSend, -8} Packets received: {PacketsReceived, -8} Packet loss: {PacketLoss, -3}%\n";
         }
     }
 }
