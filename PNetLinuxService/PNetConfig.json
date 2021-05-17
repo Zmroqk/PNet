@@ -1,0 +1,13 @@
+﻿{
+  "PingLogValue": 1,
+  "Interval": 60000,
+  "ReconnectInteval":  120000,
+  "UseTraceroute": false,
+  "PingMode": 0,
+  "ErrorsCount": 3,
+  "OutputPath": "/var/log/PNet.d",
+  "Hosts": {
+    "Domains": ["wp.pl", "onet.pl", "pwr.edu.pl"],
+    "Ips": []
+  }
+}
