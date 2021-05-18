@@ -24,6 +24,11 @@ namespace PNetDll
             sw.WriteLine(JsonSerializer.Serialize(pingData));
         }
 
+        /// <summary>
+        /// Deserialize ping data from stream
+        /// </summary>
+        /// <param name="stream">Stream from which to read data</param>
+        /// <returns>Ping data read from stream</returns>
         public static PingData Deserialize(Stream stream)
         {
             StreamReader sr = new StreamReader(stream);
