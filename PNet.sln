@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PNetDll", "PNetDll\PNetDll.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PNetLinuxService", "PNetLinuxService\PNetLinuxService.csproj", "{5C48B414-C21E-47A9-8197-61DA78001AFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P-NetClient", "P-NetClient\P-NetClient.csproj", "{B63B176F-8777-41BC-84F1-88E9A1576849}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5C48B414-C21E-47A9-8197-61DA78001AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C48B414-C21E-47A9-8197-61DA78001AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C48B414-C21E-47A9-8197-61DA78001AFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63B176F-8777-41BC-84F1-88E9A1576849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63B176F-8777-41BC-84F1-88E9A1576849}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63B176F-8777-41BC-84F1-88E9A1576849}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63B176F-8777-41BC-84F1-88E9A1576849}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
