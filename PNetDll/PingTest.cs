@@ -136,6 +136,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// IP address for this test
+        /// </summary>
+        public IPAddress IpAddress { get; set; }
+
         long _ActualPing;
         long _AveragePing;
         long _MaxPing;
@@ -143,11 +148,6 @@ namespace PNetDll
         int _PacketsReceived;
         float _PacketLoss;
         string _Hostname;
-
-        /// <summary>
-        /// IP address for this test
-        /// </summary>
-        IPAddress iPAddress;
 
         /// <summary>
         /// Timeout value
@@ -186,7 +186,7 @@ namespace PNetDll
         /// <param name="timeout">Timeout value for ping connection</param>
         public PingTest(IPAddress ip, int timeout = 5000)
         {
-            this.iPAddress = ip;
+            this.IpAddress = ip;
             this.timeout = timeout;
             lastPings = new List<long>();
             connectionErrors = 0;
@@ -203,12 +203,12 @@ namespace PNetDll
         {
             if (hostnameResolved)
             {
-                Hostname = Dns.GetHostEntry(iPAddress)?.HostName;
+                Hostname = Dns.GetHostEntry(IpAddress)?.HostName;
                 hostnameResolved = true;
             }
             Ping ping = new Ping();
             PacketsSend++;
-            return ping.SendPingAsync(iPAddress, timeout, BitConverter.GetBytes(index++)).ContinueWith(OnPingCompleted);
+            return ping.SendPingAsync(IpAddress, timeout, BitConverter.GetBytes(index++)).ContinueWith(OnPingCompleted);
         }
 
         /// <summary>
@@ -261,8 +261,8 @@ namespace PNetDll
             PingData pingData = new PingData()
             {
                 DateTime = DateTime.Now.AddMilliseconds(-pingReply.RoundtripTime),
-                IPAddress = iPAddress,
-                IPAddressString = iPAddress.ToString(),
+                IPAddress = IpAddress,
+                IPAddressString = IpAddress.ToString(),
                 Hostname = Hostname,
                 Index = index,
                 Ping = pingReply.RoundtripTime,
@@ -283,7 +283,7 @@ namespace PNetDll
 
         public override string ToString()
         {
-            return $"Test for: {iPAddress, -20}, {Hostname}\n" +
+            return $"Test for: {IpAddress, -20}, {Hostname}\n" +
                 $"Actual ping: {ActualPing, -5} Average ping: {AveragePing, -5} Max ping: {MaxPing, -5}\n" +
                 $"Packets send: {PacketsSend, -8} Packets received: {PacketsReceived, -8} Packet loss: {PacketLoss, -3}%\n";
         }
