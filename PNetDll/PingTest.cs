@@ -9,11 +9,24 @@ using System.Threading;
 
 namespace PNetDll
 {
+    /// <summary>
+    /// Class that sends pings to destination and creates history about this connection
+    /// </summary>
     public class PingTest : INotifyPropertyChanged
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Called when ping is completed
+        /// </summary>
         public event PingCompletedEventHandler PingCompleted;
 
+        /// <summary>
+        /// Last ping
+        /// </summary>
         public long ActualPing
         {
             get
@@ -27,6 +40,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Average ping
+        /// </summary>
         public long AveragePing
         {
             get
@@ -40,6 +56,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Max ping
+        /// </summary>
         public long MaxPing
         {
             get
@@ -53,6 +72,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Packets send
+        /// </summary>
         public int PacketsSend
         {
             get
@@ -66,6 +88,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Packets received
+        /// </summary>
         public int PacketsReceived
         {
             get
@@ -79,6 +104,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Percent of packets lost
+        /// </summary>
         public float PacketLoss
         {
             get
@@ -92,6 +120,9 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Destination domain name
+        /// </summary>
         public string Hostname
         {
             get
@@ -113,20 +144,46 @@ namespace PNetDll
         float _PacketLoss;
         string _Hostname;
 
+        /// <summary>
+        /// IP address for this test
+        /// </summary>
         IPAddress iPAddress;
 
+        /// <summary>
+        /// Timeout value
+        /// </summary>
         int timeout;
 
+        /// <summary>
+        /// Last pings history
+        /// </summary>
         List<long> lastPings;
 
+        /// <summary>
+        /// Connection errors count
+        /// </summary>
         ushort connectionErrors;
 
+        /// <summary>
+        /// True if we already tried getting dns name for ip address
+        /// </summary>
         bool hostnameResolved;
 
+        /// <summary>
+        /// Index of current packet
+        /// </summary>
         int index;
 
+        /// <summary>
+        /// Last packet index received
+        /// </summary>
         int lastIndex;
 
+        /// <summary>
+        /// Create instance of test
+        /// </summary>
+        /// <param name="ip">IP Address for this test</param>
+        /// <param name="timeout">Timeout value for ping connection</param>
         public PingTest(IPAddress ip, int timeout = 5000)
         {
             this.iPAddress = ip;
@@ -138,6 +195,10 @@ namespace PNetDll
             lastIndex = 0;
         }
 
+        /// <summary>
+        /// Send a ping to destination
+        /// </summary>
+        /// <returns>Running task for sending a ping to destination</returns>
         public Task PingAsync()
         {
             if (hostnameResolved)
@@ -150,6 +211,10 @@ namespace PNetDll
             return ping.SendPingAsync(iPAddress, timeout, BitConverter.GetBytes(index++)).ContinueWith(OnPingCompleted);
         }
 
+        /// <summary>
+        /// Operation called when ping returns
+        /// </summary>
+        /// <param name="pr">Task with ping reply data</param>
         void OnPingCompleted(Task<PingReply> pr)
         {
             PingReply pingReply = pr.Result;
@@ -207,6 +272,10 @@ namespace PNetDll
             PingCompleted?.Invoke(this, pingData);
         }
 
+        /// <summary>
+        /// Notify property has changed
+        /// </summary>
+        /// <param name="propertyName">Name of property</param>
         void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
