@@ -10,6 +10,9 @@ using System.Timers;
 
 namespace PNetDll
 {
+    /// <summary>
+    /// Class that creates test for testing connection between source and destination
+    /// </summary>
     public class PingTestManager
     {
         /// <summary>
@@ -126,7 +129,19 @@ namespace PNetDll
             }
         }
 
-    public PingTestManager(IPAddress destinationHost, int pingLogValue = 100, int interval = 5000, 
+        /// <summary>
+        /// Create ping tests manager
+        /// </summary>
+        /// <param name="destinationHost">Host to which connection shoudl be tested</param>
+        /// <param name="pingLogValue">Minimal value of ping which will call PingLimitExceeded</param>
+        /// <param name="interval">Interval between tests</param>
+        /// <param name="traceRoute">Use traceroute</param>
+        /// <param name="pingMode">Ping mode for tests</param>
+        /// <param name="errorsCount">Errors count after which destination host will be ... as disconnected</param>
+        /// <param name="reconnectInterval">Interval used when trying to reconnect</param>
+        /// <param name="logHistory">Log history</param>
+        /// <param name="streamData">Create output data stream</param>
+        public PingTestManager(IPAddress destinationHost, int pingLogValue = 100, int interval = 5000, 
                                     bool traceRoute = false, PingMode pingMode = PingMode.Asynchronously,
                                     short errorsCount = 3, int reconnectInterval = 10000, 
                                     bool logHistory = false, bool streamData = false)
@@ -150,6 +165,9 @@ namespace PNetDll
             StreamData = streamData;
         }
 
+        /// <summary>
+        /// Start manager tests
+        /// </summary>
         public void StartTest()
         {
             if (pingTimer != null)
@@ -174,6 +192,10 @@ namespace PNetDll
             pingTimer.Start();
         }
 
+        /// <summary>
+        /// Create history for ping test
+        /// </summary>
+        /// <param name="pt">Ping test for which history should be created</param>
         private void CreateHistory(PingTest pt)
         {
             if (LogHistory)
@@ -182,6 +204,9 @@ namespace PNetDll
                 HistoryStream.Add(pt, new MemoryStream());
         }
 
+        /// <summary>
+        /// Find all hosts between source and destination
+        /// </summary>
         void FindHostsOnPath()
         {
             int ttl = 1;
@@ -222,6 +247,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Operation called after ping
+        /// </summary>
+        /// <param name="sender">Test that called this event</param>
+        /// <param name="pingData">Ping data</param>
         private void PingCompleted(object sender, PingData pingData)
         {
             PingTest pt = (PingTest)sender;
@@ -254,6 +284,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Operation called after BlockedPingTimer.Elapsed event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BlockedPingsTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             foreach (PingTest pt in blockedPings)
@@ -262,6 +297,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Operation called after blocked ping PingCompleted event
+        /// </summary>
+        /// <param name="sender">Test that called this event</param>
+        /// <param name="pingData">Ping data</param>
         private void PingReconnectAttemptCompleted(object sender, PingData pingData)
         {
             PingTest pt = (PingTest)sender;
@@ -282,6 +322,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Operation called after pingTimer.Elapsed event with ping mode set to Simultenous
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void PingSimultaneous(object sender, ElapsedEventArgs e)
         {
             foreach (PingTest pt in availablePings)
@@ -290,6 +335,11 @@ namespace PNetDll
             }
         }
 
+        /// <summary>
+        /// Operation called after pingTimer.Elapsed event with ping mode set to Asynchronously
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void PingAsynchronously(object sender, ElapsedEventArgs e)
         {
             lock (availablePings)
