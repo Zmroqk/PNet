@@ -18,14 +18,14 @@ namespace PNetLinuxService
         public PingMode PingMode { get; set; } = PingMode.Simultaneous;
         public short ErrorsCount { get; set; } = 3;
         public int ReconnectInterval { get; set; } = 120000;
-        public string OutputPath { get; set; } = "C:/var/log/PNet.d";
+        public string OutputPath { get; set; } = "/var/log/PNet.d";
         public Hosts Hosts { get; set; } = new Hosts();
 
 
         public static void ReadConfig()
         {
             if (Instance == null)
-                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("C:/etc/PNet"));
+                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
         }
     }
 }
