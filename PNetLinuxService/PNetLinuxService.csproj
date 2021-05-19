@@ -6,16 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PNetConfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="PNetConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PNetDll\PNetDll.csproj" />
   </ItemGroup>
 

@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 using System.IO;
 using PNetDll;
 using System.Threading;
+using System.Collections.ObjectModel;
 
 namespace PNetLinuxService
 {
-    public class Logger : IDisposable
+    public class Logger
     {
         PingTestManager Manager { get; set; }
         Dictionary<PingTest, FileStream> FileStreams { get; set; }
-        Dictionary<PingTest, CancellationTokenSource> Tokens { get; set; }
 
         public Logger(PingTestManager manager)
         {
             Manager = manager;
             FileStreams = new Dictionary<PingTest, FileStream>();
-            Tokens = new Dictionary<PingTest, CancellationTokenSource>();
         }
 
         public void StartLogging()
@@ -30,34 +29,29 @@ namespace PNetLinuxService
             foreach (PingTest pt in Manager.PingTests)
             {
                 string path = Path.Combine(Config.Instance.OutputPath, 
-                    Manager.DestinationHost.ToString().Replace('.', '_'), 
+                    Manager.DestinationHost.ToString(), 
                     DateTime.Today.ToString("yyyy_MM_dd") + "___" + pt.IpAddress.ToString().Replace('.', '_'));
                 FileStreams.Add(pt, new FileStream(path, FileMode.Append));
-                Tokens.Add(pt, new CancellationTokenSource());
-                new Task(LogTest, pt, Tokens[pt].Token);
+                LogTest(pt);
             }
         }
 
-        async void LogTest(object test)
+        async void LogTest(PingTest test)
         {
-            PingTest pt = (PingTest)test;
+            PingTest pt = test;
             StreamWriter sw = new StreamWriter(FileStreams[pt]);
-            CancellationTokenSource cts = Tokens[pt];
-            MemoryStream dataStream = Manager.HistoryStream[pt];
-            while (true)
-            {
-                PingData data = await PingDataSerializationTool.DeserializeAsync(dataStream, cts);
-                sw.WriteLine($"{data.DateTime.ToShortTimeString(),-25} | IP: {data.IPAddress,-50} | Ping: {data.Ping,-4} ");
-                cts.Token.ThrowIfCancellationRequested();
-            }
-        }
-
-        public void Dispose()
-        {
-            foreach(CancellationTokenSource cts in Tokens.Values)
-            {
-                cts.Cancel();
-            }
+            //MemoryStream dataStream = Manager.HistoryStream[pt];
+            Manager.History[pt].CollectionChanged += (sender, e) => {
+                if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                    return;
+                ObservableCollection<PingData> collection = (ObservableCollection<PingData>)sender;
+                foreach(PingData data in e.NewItems)
+                {
+                    sw.WriteLine($"{data.DateTime.ToLongTimeString(),-25} | IP: {data.IPAddressString,-50} | Ping: {data.Ping,-4} ");
+                    collection.Remove(data);
+                }           
+                sw.Flush();
+            };
         }
     }
 }
