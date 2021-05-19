@@ -50,11 +50,11 @@ namespace PNetDll
             CancellationToken token = new CancellationToken();
             if (cancellationToken != null)
                 token = cancellationToken.Token;
-            return Task.Run(() => {
+            return Task.Run(async () => {
                 StreamReader sr = new StreamReader(stream);
                 string line;
                 while ((line = sr.ReadLine()) == null){
-                    Task.Delay(1000);
+                    await Task.Delay(1000);
                     token.ThrowIfCancellationRequested();
                 }
                 return JsonSerializer.Deserialize<PingData>(line);

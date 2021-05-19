@@ -153,16 +153,16 @@ namespace PNetDll
             PingTests = new List<PingTest>();
             availablePings = new List<PingTest>();
             blockedPings = new List<PingTest>();
-            if(LogHistory)
+            LogHistory = logHistory;
+            StreamData = streamData;
+            if (LogHistory)
                 History = new Dictionary<PingTest, List<PingData>>();
             if(StreamData)
                 HistoryStream = new Dictionary<PingTest, MemoryStream>();
             pingIndex = 0;
             Interval = interval;
             ErrorsCount = errorsCount;
-            ReconnectInterval = reconnectInterval;
-            LogHistory = logHistory;
-            StreamData = streamData;
+            ReconnectInterval = reconnectInterval;          
         }
 
         /// <summary>

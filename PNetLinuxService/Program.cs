@@ -40,13 +40,13 @@ namespace PNetLinuxService
 
             while (true)
             {
-                Task.Delay(60000);
+                Task.Delay(60000).Wait();
             }
         }
 
-        private static void ResetLoggersAtNewDay(Dictionary<PingTestManager, Logger> loggers)
+        private static async void ResetLoggersAtNewDay(Dictionary<PingTestManager, Logger> loggers)
         {
-            Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000);
+            await Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000);
             foreach (PingTestManager manager in loggers.Keys)
             {
                 loggers[manager].Dispose();
