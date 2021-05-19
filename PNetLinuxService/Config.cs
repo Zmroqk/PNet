@@ -38,7 +38,7 @@ namespace PNetLinuxService
             if (Instance == null)
             {
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
-                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
+                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
                 else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");

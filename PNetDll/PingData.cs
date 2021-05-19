@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace PNetDll
 {
     /// <summary>
     /// Ping data schema
     /// </summary>
-    [Serializable]
+
     public class PingData
     {
         /// <summary>
         /// Destination ip address for this ping
         /// </summary>
         [field: NonSerialized]
+        [JsonIgnore]
         public IPAddress IPAddress { get; init; }
 
         /// <summary>

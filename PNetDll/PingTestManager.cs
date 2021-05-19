@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -71,17 +72,7 @@ namespace PNetDll
         /// <summary>
         /// History of pings
         /// </summary>
-        public Dictionary<PingTest, List<PingData>> History { get; private set; }
- 
-        /// <summary>
-        /// Should history be streamed
-        /// </summary>
-        public bool StreamData { get; init; }
-
-        /// <summary>
-        /// Dictionary of streams for each test
-        /// </summary>
-        public Dictionary<PingTest, MemoryStream> HistoryStream { get; private set; }
+        public Dictionary<PingTest, ObservableCollection<PingData>> History { get; private set; }
 
         /// <summary>
         /// Limit for ping before calling PingLimitExceeded
@@ -153,16 +144,16 @@ namespace PNetDll
             PingTests = new List<PingTest>();
             availablePings = new List<PingTest>();
             blockedPings = new List<PingTest>();
-            if(LogHistory)
-                History = new Dictionary<PingTest, List<PingData>>();
-            if(StreamData)
-                HistoryStream = new Dictionary<PingTest, MemoryStream>();
+            LogHistory = logHistory;
+            //StreamData = streamData;
+            if (LogHistory)
+                History = new Dictionary<PingTest, ObservableCollection<PingData>>();
+            //if(StreamData)
+            //    HistoryStream = new Dictionary<PingTest, MemoryStream>();
             pingIndex = 0;
             Interval = interval;
             ErrorsCount = errorsCount;
-            ReconnectInterval = reconnectInterval;
-            LogHistory = logHistory;
-            StreamData = streamData;
+            ReconnectInterval = reconnectInterval;          
         }
 
         /// <summary>
@@ -179,6 +170,7 @@ namespace PNetDll
             else
             {
                 PingTest pt = new PingTest(DestinationHost);
+                pt.PingCompleted += PingCompleted;
                 PingTests.Add(pt);
                 availablePings.Add(pt);
                 CreateHistory(pt);
@@ -199,9 +191,9 @@ namespace PNetDll
         private void CreateHistory(PingTest pt)
         {
             if (LogHistory)
-                History.Add(pt, new List<PingData>());
-            if (StreamData)
-                HistoryStream.Add(pt, new MemoryStream());
+                History.Add(pt, new ObservableCollection<PingData>());
+            //if (StreamData)
+            //    HistoryStream.Add(pt, new MemoryStream());
         }
 
         /// <summary>
@@ -258,11 +250,13 @@ namespace PNetDll
             if (pingData.ErrorCount > ErrorsCount)
             {
                 pt.PingCompleted -= PingCompleted;
-                blockedPings.Add(pt);          
+                lock(blockedPings)
+                    blockedPings.Add(pt);          
                 lock (availablePings)
                 {
                     availablePings.Remove(pt);
-                    pingIndex = pingIndex % availablePings.Count;
+                    if(availablePings.Count > 0)
+                        pingIndex = pingIndex % availablePings.Count;
                 }              
                 pt.PingCompleted += PingReconnectAttemptCompleted;
                 if(blockedPingsTimer != null)
@@ -278,9 +272,10 @@ namespace PNetDll
                 if(pingData.Ping >= PingLogValue)
                     PingLimitExceeded?.Invoke(this, new PingLimitExceededData() { PingData = pingData, PingTest = pt });
                 if(LogHistory)
-                    History[pt].Add(pingData);
-                if (StreamData)
-                    PingDataSerializationTool.Serialize(HistoryStream[pt], pingData);
+                    lock(History[pt])
+                        History[pt].Add(pingData);
+                //if (StreamData)
+                //   PingDataSerializationTool.Serialize(HistoryStream[pt], pingData);
             }
         }
 
@@ -291,9 +286,12 @@ namespace PNetDll
         /// <param name="e"></param>
         private void BlockedPingsTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            foreach (PingTest pt in blockedPings)
+            lock (blockedPings)
             {
-                pt.PingAsync();
+                foreach (PingTest pt in blockedPings)
+                {
+                    pt.PingAsync();
+                }
             }
         }
 
@@ -308,7 +306,8 @@ namespace PNetDll
             if (pingData.Success)
             {
                 pt.PingCompleted -= PingReconnectAttemptCompleted;
-                blockedPings.Remove(pt);
+                lock(blockedPings)
+                    blockedPings.Remove(pt);
                 lock (availablePings)
                 {
                     availablePings.Add(pt);
@@ -329,9 +328,12 @@ namespace PNetDll
         /// <param name="e"></param>
         void PingSimultaneous(object sender, ElapsedEventArgs e)
         {
-            foreach (PingTest pt in availablePings)
+            lock (availablePings)
             {
-                pt.PingAsync();
+                foreach (PingTest pt in availablePings)
+                {
+                    pt.PingAsync();
+                }
             }
         }
 
@@ -345,7 +347,8 @@ namespace PNetDll
             lock (availablePings)
             {
                 availablePings[pingIndex].PingAsync();
-                pingIndex = ++pingIndex % availablePings.Count;
+                if (availablePings.Count > 0)
+                    pingIndex = ++pingIndex % availablePings.Count;
             }            
         }
     }
