@@ -18,14 +18,34 @@ namespace PNetLinuxService
         public PingMode PingMode { get; set; } = PingMode.Simultaneous;
         public short ErrorsCount { get; set; } = 3;
         public int ReconnectInterval { get; set; } = 120000;
-        public string OutputPath { get; set; } = "/var/log/PNet.d";
+        public string OutputPath { get; set; }
         public Hosts Hosts { get; set; } = new Hosts();
 
+        public Config()
+        {
+            if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                OutputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");
+            }
+            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                OutputPath = "var/log/PNet.d";
+            }
+        }
 
         public static void ReadConfig()
         {
             if (Instance == null)
-                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
+                else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");
+                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(path + "/PNet.json"));
+                }
+                    
+            }              
         }
     }
 }
