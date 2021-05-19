@@ -5,9 +5,9 @@
   "UseTraceroute": false,
   "PingMode": 0,
   "ErrorsCount": 3,
-  "OutputPath": "/var/log/PNet.d",
+  "OutputPath": "C:/ProgramData/PNet",
   "Hosts": {
-    "Domains": [ "wp.pl", "onet.pl", "pwr.edu.pl" ],
+    "Domains": [ "wp.pl", "onet.pl"],
     "Ips": []
   }
 }

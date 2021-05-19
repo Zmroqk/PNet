@@ -8,9 +8,9 @@ using PNetDll;
 using System.Threading;
 using System.Collections.ObjectModel;
 
-namespace PNetLinuxService
+namespace PNetService
 {
-    public class Logger
+    public class Logger : IDisposable
     {
         PingTestManager Manager { get; set; }
         Dictionary<PingTest, FileStream> FileStreams { get; set; }
@@ -44,16 +44,31 @@ namespace PNetLinuxService
             StreamWriter sw = new StreamWriter(FileStreams[pt]);
             //MemoryStream dataStream = Manager.HistoryStream[pt];
             Manager.History[pt].CollectionChanged += (sender, e) => {
-                if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-                    return;
-                ObservableCollection<PingData> collection = (ObservableCollection<PingData>)sender;
-                foreach(PingData data in e.NewItems)
+                try
                 {
-                    sw.WriteLine($"{data.DateTime.ToLongTimeString(),-25} | IP: {data.IPAddressString,-50} | Ping: {data.Ping,-4} ");
-                    collection.Remove(data);
-                }           
-                sw.Flush();
+                    if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                        return;
+                    ObservableCollection<PingData> collection = (ObservableCollection<PingData>)sender;
+                    foreach (PingData data in e.NewItems)
+                    {
+                        sw.WriteLine($"{data.DateTime.ToLongTimeString(),-15} | IP: {data.IPAddress,-40} | Ping: {data.Ping,-4} ");
+                        collection.Remove(data);
+                    }
+                    sw.Flush();
+                }
+                catch (Exception exc)
+                {
+                    Console.Error.WriteLine(exc.Message);
+                }
             };
+        }
+
+        public void Dispose()
+        {
+            foreach (FileStream fs in FileStreams.Values)
+            {
+                fs.Close();
+            }
         }
     }
 }

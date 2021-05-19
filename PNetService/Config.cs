@@ -7,7 +7,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PNetLinuxService
+namespace PNetService
 {
     public class Config
     {
@@ -42,7 +42,7 @@ namespace PNetLinuxService
                 else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");
-                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(path + "/PNet.json"));
+                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(path + "\\PNet.json"));
                 }
                     
             }              

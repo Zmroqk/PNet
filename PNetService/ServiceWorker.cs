@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PNetLinuxService
+namespace PNetService
 {
     public class ServiceWorker : BackgroundService
     {
@@ -28,13 +28,15 @@ namespace PNetLinuxService
             Dictionary<PingTestManager, Logger> loggers = new Dictionary<PingTestManager, Logger>();
             foreach (IPAddress address in ips)
             {
+                Console.WriteLine($"Starting test for: {address,-15}");
                 PingTestManager manager = new PingTestManager(address, Config.Instance.PingLogValue, Config.Instance.Interval,
                                                                 Config.Instance.UseTraceroute, Config.Instance.PingMode,
                                                                 Config.Instance.ErrorsCount, Config.Instance.ReconnectInterval,
-                                                                streamData: true);
+                                                                logHistory: true);
                 Logger logger = new Logger(manager);
                 manager.StartTest();
                 loggers.Add(manager, logger);
+                logger.StartLogging();
             }
             _ = Task.Run(() =>
               {

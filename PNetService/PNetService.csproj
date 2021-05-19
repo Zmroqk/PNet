@@ -1,16 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>PNetService</AssemblyName>
+    <RootNamespace>PNetService</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PNetConfig.json" />
+    <None Remove="PNetLinuxConfig.json" />
+    <None Remove="PNetWindowsConfig.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="PNetConfig.json">
+    <Content Include="PNetWindowsConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNetLinuxConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
