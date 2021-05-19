@@ -22,7 +22,11 @@ namespace PNetDll
         public static void Serialize(Stream stream, PingData pingData)
         {
             StreamWriter sw = new StreamWriter(stream);
-            sw.WriteLine(JsonSerializer.Serialize(pingData));
+            lock (stream)
+            {
+                sw.WriteLine(JsonSerializer.Serialize(pingData));
+                sw.Flush();
+            }          
         }
 
         /// <summary>
@@ -36,7 +40,11 @@ namespace PNetDll
             return Task.Run(() =>
             {
                 StreamWriter sw = new StreamWriter(stream);
-                sw.WriteLine(JsonSerializer.Serialize(pingData));
+                lock (stream)
+                {
+                    sw.WriteLine(JsonSerializer.Serialize(pingData));
+                    sw.Flush();
+                }
             });            
         }
 
@@ -52,9 +60,24 @@ namespace PNetDll
                 token = cancellationToken.Token;
             return Task.Run(async () => {
                 StreamReader sr = new StreamReader(stream);
-                string line;
-                while ((line = sr.ReadLine()) == null){
-                    await Task.Delay(1000);
+                string line = null;
+                while (String.IsNullOrEmpty(line)){
+                    lock (stream)
+                    {
+                        sr.BaseStream.Position = 0;
+                        string[] lines = sr.ReadToEnd().Split('\n');
+                        StreamWriter sw = new StreamWriter(stream);
+                        for(int i = 1; i < lines.Length; i++)
+                        {
+                            sw.WriteLine(lines[i]);
+                        }
+                        sw.Flush();
+                        if (lines.Length > 0)
+                            line = lines[0];
+                        else
+                            line = null;
+                    }
+                    await Task.Delay(200);
                     token.ThrowIfCancellationRequested();
                 }
                 return JsonSerializer.Deserialize<PingData>(line);
