@@ -218,7 +218,9 @@ namespace PNetDll
         void OnPingCompleted(Task<PingReply> pr)
         {
             PingReply pingReply = pr.Result;
-            int currentIndex = BitConverter.ToInt32(pingReply.Buffer);
+            int currentIndex = 0;
+            if (pingReply.Buffer.Length != 0)
+                currentIndex = BitConverter.ToInt32(pingReply.Buffer);
             PacketsReceived++;
             if (pingReply.Status == IPStatus.Success)
             {

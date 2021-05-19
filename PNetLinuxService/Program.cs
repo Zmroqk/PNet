@@ -25,13 +25,20 @@ namespace PNetLinuxService
             Dictionary<PingTestManager, Logger> loggers = new Dictionary<PingTestManager, Logger>();
             foreach(IPAddress address in ips)
             {
-                PingTestManager manager = new PingTestManager(address, Config.Instance.PingLogValue, Config.Instance.Interval,
+                try
+                {
+                    PingTestManager manager = new PingTestManager(address, Config.Instance.PingLogValue, Config.Instance.Interval,
                                                                 Config.Instance.UseTraceroute, Config.Instance.PingMode,
                                                                 Config.Instance.ErrorsCount, Config.Instance.ReconnectInterval,
-                                                                streamData: true);
-                Logger logger = new Logger(manager);
-                manager.StartTest();
-                loggers.Add(manager, logger);
+                                                                logHistory: true);
+                    Logger logger = new Logger(manager);
+                    manager.StartTest();
+                    loggers.Add(manager, logger);
+                    logger.StartLogging();
+                }
+                catch(Exception e){
+                    Console.Error.WriteLine(e.Message);
+                }
             }
             Task.Run(() =>
             {
@@ -40,16 +47,15 @@ namespace PNetLinuxService
 
             while (true)
             {
-                Task.Delay(60000);
+                Task.Delay(60000).Wait();
             }
         }
 
-        private static void ResetLoggersAtNewDay(Dictionary<PingTestManager, Logger> loggers)
+        private static async void ResetLoggersAtNewDay(Dictionary<PingTestManager, Logger> loggers)
         {
-            Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000);
+            await Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000);
             foreach (PingTestManager manager in loggers.Keys)
             {
-                loggers[manager].Dispose();
                 loggers[manager] = new Logger(manager);
             }
             ResetLoggersAtNewDay(loggers);
