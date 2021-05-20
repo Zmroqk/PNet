@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>PNetService</AssemblyName>
+    <RootNamespace>PNetService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="PNetLinuxConfig.json" />
+    <None Remove="PNetWindowsConfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="PNetWindowsConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNetLinuxConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PNetDll\PNetDll.csproj" />
+  </ItemGroup>
+
+</Project>
