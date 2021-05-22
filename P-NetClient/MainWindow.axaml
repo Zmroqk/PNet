@@ -2,8 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PNetClient"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="P_NetClient.MainWindow"
-        Title="P_NetClient">
-    Welcome to Avalonia!
+        x:Class="PNetClient.MainWindow"
+        Title="Ping Net Client">
+  <DockPanel LastChildFill="False">
+    <local:Menu DockPanel.Dock="Left" Width="200" MaxWidth="200"/>
+    <Panel DockPanel.Dock="Right" HorizontalAlignment="Stretch"></Panel>
+  </DockPanel>
+
 </Window>

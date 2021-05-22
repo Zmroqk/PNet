@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
+             x:Class="PNetClient.MenuRow">
+  <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="5">
+    <Image Height="20"
+            Width="20"
+            Source="{Binding FirstImagePath}"
+            DockPanel.Dock="Left"
+           Margin="5,0,10,0"/>
+    <Label Content="{Binding Text}"
+           DockPanel.Dock="Left"
+           VerticalContentAlignment="Center"
+           HorizontalContentAlignment="Center"/>
+    <Button Background="Transparent" 
+            DockPanel.Dock="Right" 
+            IsVisible="{Binding UseButton}" 
+            Margin="5" 
+            x:Name="btnMenuRow" 
+            Click="OnClick">
+      <Image Height="20"
+             Width="20"
+             Source="{Binding SecondImagePath}"
+             />
+    </Button>
+    <StackPanel DockPanel.Dock="Bottom" x:Name="SubmenuStack" IsVisible="{Binding UseSubmenu}">
+      
+    </StackPanel>
+  </DockPanel>
+</UserControl>

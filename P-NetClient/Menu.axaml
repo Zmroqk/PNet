@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:PNetClient"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
+             x:Class="PNetClient.Menu" BorderBrush="White" BorderThickness="0.5">
+  <DockPanel Margin="5" LastChildFill="False">
+    <local:MenuRow FirstImagePath="{StaticResource TestsIcon}" 
+                   SecondImagePath="{StaticResource PlusIcon}"
+                   UseButton="True"
+                   DockPanel.Dock="Top"
+                   UseSubmenu="True"
+                   Text="Testy: "
+                   MenuButtonClick="OnButtonClick"
+                   Margin="20,0,0,0"
+                   Width="190"
+                   />
+    <Button DockPanel.Dock="Top" Width="190" Background="Transparent">
+      <local:MenuRow FirstImagePath="{StaticResource CogIcon}"
+                   UseButton="False"                
+                   Text="Konfiguracja"
+                   />
+    </Button>
+    <Button DockPanel.Dock="Top" Width="190" Background="Transparent">
+      <local:MenuRow FirstImagePath="{StaticResource ServiceIcon}"
+                   UseButton="False"              
+                   Text="Serwis"
+                   />
+    </Button>
+
+  </DockPanel>
+</UserControl>

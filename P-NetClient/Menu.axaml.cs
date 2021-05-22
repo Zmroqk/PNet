@@ -1,22 +1,26 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using System;
 
 namespace PNetClient
 {
-    public partial class MainWindow : Window
+    public partial class Menu : UserControl
     {
-        public MainWindow()
+        public Menu()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        public void OnButtonClick(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

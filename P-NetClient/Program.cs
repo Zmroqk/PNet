@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using System;
 
-namespace P_NetClient
+namespace PNetClient
 {
     class Program
     {
