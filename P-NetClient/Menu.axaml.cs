@@ -22,5 +22,16 @@ namespace PNetClient
         {
             
         }
+
+        public void ButtonConfigClick(object sender, RoutedEventArgs e)
+        {
+            if(Parent != null)
+                ((MainWindow)Parent.Parent).CurrentView = new ConfigurationPage();
+        }
+
+        public void ButtonServiceClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }

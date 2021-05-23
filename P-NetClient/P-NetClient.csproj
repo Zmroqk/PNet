@@ -30,6 +30,9 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.4" />
    </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PNetDll\PNetDll.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Plusik.png" />
     <Resource Include="Plusik.xcf" />
   </ItemGroup>

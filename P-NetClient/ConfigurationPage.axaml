@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dll="using:PNetDll"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+             x:Class="PNetClient.ConfigurationPage">
+  <StackPanel>
+    <Label Content="Configuration page" 
+           HorizontalContentAlignment="Center" 
+           Margin="10"
+           FontSize="20"
+           FontWeight="Bold"/>
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <!-- Ping Log Value -->
+      <Label Grid.Column="0" 
+             Grid.Row="0"
+             Content="Ping Log Value: " 
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <TextBox Grid.Column="1"
+               Grid.Row="0"
+               Watermark="Ping Log Value"
+               Text="{Binding PingLogValue}"
+               MaxWidth="200"
+               Width="200"
+               />
+      <!-- Interval -->
+      <Label Grid.Column="0" 
+             Grid.Row="1"
+             Content="Interval: " 
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <TextBox Grid.Column="1"
+               Grid.Row="1"
+               Watermark="Test interval"
+               Text="{Binding Interval}"
+               MaxWidth="200"
+               Width="200"/>
+      <!-- Reconnect Interval -->
+      <Label Grid.Column="0"
+             Grid.Row="2"
+             Content="Reconnect Interval: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <TextBox Grid.Column="1"
+               Grid.Row="2"
+               Watermark="Reconnect interval"
+               Text="{Binding ReconnectInterval}"
+               MaxWidth="200"
+               Width="200"/>
+      <!-- Errors Count -->
+      <Label Grid.Column="0"
+             Grid.Row="3"
+             Content="Errors Count: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <TextBox Grid.Column="1"
+               Grid.Row="3"
+               Watermark="Errors Count"
+               Text="{Binding ErrorsCount}"
+               Width="200"/>
+      <!-- Ping Mode -->
+      <Label Grid.Column="0"
+             Grid.Row="4"
+             Content="Ping Mode: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <StackPanel Grid.Column="1" 
+                  Grid.Row="4" 
+                  Orientation="Horizontal" 
+                  Spacing="10">
+        <RadioButton GroupName="PingMode" 
+                     Content="Simultaneous"
+                     IsChecked="{Binding Path=PingMode, Converter={StaticResource pingModeConverter}, ConverterParameter={x:Static dll:PingMode.Simultaneous}}"/>
+        <RadioButton GroupName="PingMode"
+                     Content="Asynchronously"
+                     IsChecked="{Binding Path=PingMode, Converter={StaticResource pingModeConverter}, ConverterParameter={x:Static dll:PingMode.Asynchronously}}"/>
+      </StackPanel>
+      <!-- Use Traceroute -->
+      <Label Grid.Column="0"
+             Grid.Row="5"
+             Content="Use Traceroute: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <CheckBox Grid.Column="1"
+                Grid.Row="5"
+                IsChecked="{Binding UseTraceroute}"/>
+      <!-- OutputPath -->
+      <Label Grid.Column="0"
+             Grid.Row="6"
+             Content="Output path: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <StackPanel Grid.Column="1"
+                  Grid.Row="6">
+        <TextBox Text="{Binding OutputPath}"
+                 Watermark="Output Path"
+                 MaxWidth="200"/>
+      </StackPanel>
+
+      <!-- Save -->
+      <Button Grid.Column="1"
+              Grid.Row="7"
+              Content="Save configuration"
+              Margin="20"
+              HorizontalContentAlignment="Center"
+              Width="200"
+              MaxWidth="200"
+              Click="ButtonSaveClick"/>
+    </Grid>
+  </StackPanel>
+</UserControl>

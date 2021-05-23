@@ -16,13 +16,19 @@
                    Margin="20,0,0,0"
                    Width="190"
                    />
-    <Button DockPanel.Dock="Top" Width="190" Background="Transparent">
+    <Button DockPanel.Dock="Top" 
+            Width="190" 
+            Background="Transparent" 
+            Click="ButtonConfigClick">
       <local:MenuRow FirstImagePath="{StaticResource CogIcon}"
                    UseButton="False"                
                    Text="Konfiguracja"
                    />
     </Button>
-    <Button DockPanel.Dock="Top" Width="190" Background="Transparent">
+    <Button DockPanel.Dock="Top" 
+            Width="190" 
+            Background="Transparent"
+            Click="ButtonServiceClick">
       <local:MenuRow FirstImagePath="{StaticResource ServiceIcon}"
                    UseButton="False"              
                    Text="Serwis"

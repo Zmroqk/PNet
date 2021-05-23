@@ -5,10 +5,14 @@
         xmlns:local="clr-namespace:PNetClient"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PNetClient.MainWindow"
-        Title="Ping Net Client">
-  <DockPanel LastChildFill="False">
-    <local:Menu DockPanel.Dock="Left" Width="200" MaxWidth="200"/>
-    <Panel DockPanel.Dock="Right" HorizontalAlignment="Stretch"></Panel>
-  </DockPanel>
+        Title="Ping Net Client"
+        MinWidth="600"
+        MinHeight="300">
+  <Grid ColumnDefinitions="200,*">
+    <local:Menu Grid.Column="0" Width="200" MaxWidth="200"/>
+    <Viewbox Grid.Column="1" 
+             Child="{Binding CurrentView}" 
+             Margin="20"/>
+  </Grid>
 
 </Window>
