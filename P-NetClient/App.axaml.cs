@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using PNetDll;
+using System.Collections.Generic;
 
 namespace PNetClient
 {

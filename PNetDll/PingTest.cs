@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Net.Sockets;
 
 namespace PNetDll
 {
@@ -201,10 +202,21 @@ namespace PNetDll
         /// <returns>Running task for sending a ping to destination</returns>
         public Task PingAsync()
         {
-            if (hostnameResolved)
+            if (!hostnameResolved)
             {
-                Hostname = Dns.GetHostEntry(IpAddress)?.HostName;
-                hostnameResolved = true;
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        Hostname = Dns.GetHostEntry(IpAddress)?.HostName;
+                    }
+                    catch (SocketException e) { }
+                    if (string.IsNullOrEmpty(Hostname))
+                    {
+                        Hostname = IpAddress.ToString();
+                    }
+                    hostnameResolved = true;
+                });              
             }
             Ping ping = new Ping();
             PacketsSend++;
@@ -230,7 +242,7 @@ namespace PNetDll
                     ActualPing = pingReply.RoundtripTime;
                     lastIndex = currentIndex;
                 }           
-                if (pingReply.RoundtripTime < MaxPing)
+                if (pingReply.RoundtripTime > MaxPing)
                     MaxPing = pingReply.RoundtripTime;
             }
             else

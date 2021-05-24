@@ -14,7 +14,7 @@ namespace PNetDll
     /// <summary>
     /// Class that creates test for testing connection between source and destination
     /// </summary>
-    public class PingTestManager
+    public class PingTestManager : IDisposable
     {
         /// <summary>
         /// Interval for ping tests
@@ -204,22 +204,25 @@ namespace PNetDll
             int ttl = 1;
             Ping ping = new Ping();
             PingReply pr;
+            List<IPAddress> IPs = new List<IPAddress>();
             do
             {
-                pr = ping.Send(DestinationHost, 5000, new byte[32], new PingOptions() { Ttl = ttl });
+                pr = ping.Send(DestinationHost, 1000, new byte[32], new PingOptions() { Ttl = ttl });
+                if(!IPs.Contains(pr.Address))
+                    IPs.Add(pr.Address);
                 if(pr.Status != IPStatus.Success)
                     ttl++;
             }
             while (pr.Status != IPStatus.Success);
             List<Task<PingTest>> pings = new List<Task<PingTest>>();
-            for (int i = 1; i <= ttl; i++)
+            for (int i = 0; i < IPs.Count; i++)
             {
-                int actualTtl = i;
+                int actualI = i;
                 pings.Add(Task.Run(() =>
                 {
                     Ping ping = new Ping();
                     PingReply pr;
-                    pr = ping.Send(DestinationHost, 5000, new byte[32], new PingOptions() { Ttl = actualTtl });
+                    pr = ping.Send(IPs[actualI], 2000);
                     if (pr.Status == IPStatus.Success)
                         return new PingTest(pr.Address);
                     return null;
@@ -271,9 +274,14 @@ namespace PNetDll
             {
                 if(pingData.Ping >= PingLogValue)
                     PingLimitExceeded?.Invoke(this, new PingLimitExceededData() { PingData = pingData, PingTest = pt });
-                if(LogHistory)
-                    lock(History[pt])
+                if (LogHistory)
+                    lock (History[pt])
+                    {
+                        if (History[pt].Count > 100)
+                            History[pt].RemoveAt(0);
                         History[pt].Add(pingData);
+                    }
+                        
                 //if (StreamData)
                 //   PingDataSerializationTool.Serialize(HistoryStream[pt], pingData);
             }
@@ -350,6 +358,12 @@ namespace PNetDll
                 if (availablePings.Count > 0)
                     pingIndex = ++pingIndex % availablePings.Count;
             }            
+        }
+
+        public void Dispose()
+        {
+            pingTimer?.Dispose();
+            blockedPingsTimer?.Dispose();
         }
     }
 }

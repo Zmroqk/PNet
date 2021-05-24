@@ -73,6 +73,7 @@ namespace PNetClient
             UseButton = true;
             UseSubmenu = false;
             SubmenuStack = this.FindControl<StackPanel>("SubmenuStack");
+            SubmenuStack.DataContext = SubmenuStack;
         }
 
         private void OnClick(object sender, RoutedEventArgs e)

@@ -5,6 +5,7 @@
              x:Class="PNetClient.App">
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
+      <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
     </Application.Styles>
   <Application.Resources>
     <imaging:Bitmap x:Key="PlusIcon">

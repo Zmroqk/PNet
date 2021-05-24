@@ -8,9 +8,12 @@ namespace PNetClient
 {
     public partial class Menu : UserControl
     {
+        public static MenuRow? Tests { get; set; }
+
         public Menu()
         {
             InitializeComponent();
+            Tests = this.FindControl<MenuRow>("TestsMenu");
         }
 
         private void InitializeComponent()
@@ -18,15 +21,16 @@ namespace PNetClient
             AvaloniaXamlLoader.Load(this);
         }
 
-        public void OnButtonClick(object sender, RoutedEventArgs e)
+        public void ButtonAddTestClick(object sender, RoutedEventArgs e)
         {
-            
+            if (Parent != null)
+                MainWindow.Instance.CurrentView = new AddTestPage();
         }
 
         public void ButtonConfigClick(object sender, RoutedEventArgs e)
         {
             if(Parent != null)
-                ((MainWindow)Parent.Parent).CurrentView = new ConfigurationPage();
+                MainWindow.Instance.CurrentView = new ConfigurationPage();
         }
 
         public void ButtonServiceClick(object sender, RoutedEventArgs e)

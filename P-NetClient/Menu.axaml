@@ -11,27 +11,33 @@
                    UseButton="True"
                    DockPanel.Dock="Top"
                    UseSubmenu="True"
-                   Text="Testy: "
-                   MenuButtonClick="OnButtonClick"
-                   Margin="20,0,0,0"
+                   Text="Tests: "
+                   MenuButtonClick="ButtonAddTestClick"
+                   Margin="10,0,10,0"
                    Width="190"
+                   x:Name="TestsMenu"
                    />
     <Button DockPanel.Dock="Top" 
             Width="190" 
             Background="Transparent" 
-            Click="ButtonConfigClick">
+            Click="ButtonConfigClick"
+            Padding="0"
+            Margin="0,10,0,0"
+            >
       <local:MenuRow FirstImagePath="{StaticResource CogIcon}"
                    UseButton="False"                
-                   Text="Konfiguracja"
+                   Text="Configuration"
                    />
     </Button>
     <Button DockPanel.Dock="Top" 
             Width="190" 
             Background="Transparent"
-            Click="ButtonServiceClick">
+            Click="ButtonServiceClick"
+            Padding="0"
+            Margin="0,10,0,0">
       <local:MenuRow FirstImagePath="{StaticResource ServiceIcon}"
                    UseButton="False"              
-                   Text="Serwis"
+                   Text="Service"
                    />
     </Button>
 

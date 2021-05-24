@@ -23,6 +23,13 @@ namespace PNetClient
         public void SaveConfiguration()
         {
             File.WriteAllText(".config", JsonSerializer.Serialize(this));
+            foreach (TestPage tp in MainWindow.TestPages)
+            {
+                tp.Manager.Interval = Interval;
+                tp.Manager.ReconnectInterval = ReconnectInterval;
+                tp.Manager.ErrorsCount = ErrorsCount;
+                tp.Manager.PingLogValue = PingLogValue;
+            }               
         }
 
         public static void ReadConfiguration()

@@ -1,13 +1,18 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System.Collections.Generic;
 
 namespace PNetClient
 {
     public partial class MainWindow : Window
     {
+        public static MainWindow? Instance;
+
         public static readonly StyledProperty<IControl> CurrentViewProperty =
             AvaloniaProperty.Register<MenuRow, IControl>(nameof(CurrentView));
+
+        public static List<TestPage> TestPages { get; } = new List<TestPage>();
 
         public IControl CurrentView { 
             get { return GetValue(CurrentViewProperty); } 
@@ -20,6 +25,7 @@ namespace PNetClient
             DataContext = this;
             Config.ReadConfiguration();
             CurrentView = new ConfigurationPage();
+            Instance = this;
 #if DEBUG
             this.AttachDevTools();
 #endif
