@@ -35,7 +35,8 @@ namespace PNetClient
 
         public void ButtonServiceClick(object sender, RoutedEventArgs e)
         {
-            
+            if (Parent != null)
+                MainWindow.Instance.CurrentView = new ServicePage();
         }
     }
 }

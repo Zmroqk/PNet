@@ -51,7 +51,7 @@ namespace PNetService
                     ObservableCollection<PingData> collection = (ObservableCollection<PingData>)sender;
                     foreach (PingData data in e.NewItems)
                     {
-                        sw.WriteLine($"{data.DateTime.ToLongTimeString(),-15} | IP: {data.IPAddress,-40} | Ping: {data.Ping,-4} ");
+                        sw.WriteLine($"{data.DateTime.ToLongTimeString()}|{data.Ping}");
                         collection.Remove(data);
                     }
                     sw.Flush();
