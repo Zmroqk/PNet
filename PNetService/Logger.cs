@@ -33,7 +33,7 @@ namespace PNetService
                 string path = Path.Combine(Config.Instance.OutputPath, 
                     Manager.DestinationHost.ToString(), 
                     DateTime.Today.ToString("yyyy_MM_dd") + "___" + pt.IpAddress.ToString().Replace('.', '_'));
-                FileStreams.Add(pt, new FileStream(path, FileMode.Append));
+                FileStreams.Add(pt, new FileStream(path, FileMode.Append, FileAccess.Write));
                 LogTest(pt);
             }
         }
