@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PNetClient"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PNetClient.MainWindow"
+        Title="Ping Net Client"
+        MinWidth="600"
+        MinHeight="300">
+  <Grid ColumnDefinitions="200,*">
+    <local:Menu Grid.Column="0" Width="200" MaxWidth="200"/>
+    <Viewbox Grid.Column="1" 
+             Child="{Binding CurrentView}" 
+             Margin="20"/>
+  </Grid>
+
+</Window>

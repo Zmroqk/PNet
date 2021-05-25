@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:oxy="using:OxyPlot.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
+             x:Class="PNetClient.ServicePage">
+  <UserControl.Resources>
+    <oxy:PlotView Height="500" Width="500" x:Key="PlotView">
+      <oxy:PlotView.DefaultTrackerTemplate>
+        <ControlTemplate>
+          <oxy:TrackerControl Position="{Binding Position}" LineExtents="{Binding PlotModel.PlotArea}">
+            <oxy:TrackerControl.Background>
+              <SolidColorBrush Color="LightBlue" />
+            </oxy:TrackerControl.Background>
+            <oxy:TrackerControl.Content>
+              <TextBlock Text="{Binding}" Margin="7" Foreground="Black" />
+            </oxy:TrackerControl.Content>
+          </oxy:TrackerControl>
+        </ControlTemplate>
+      </oxy:PlotView.DefaultTrackerTemplate>
+    </oxy:PlotView>
+  </UserControl.Resources>
+  <Canvas Width="1600" Height="900" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Button Width="50" 
+            Height="50"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            FontSize="25"
+            Canvas.Left="10"
+            Canvas.Top="10"
+            Content="?"
+            x:Name="ButtonInfo"
+            />
+    <Grid IsVisible="{Binding ElementName=ButtonInfo, Path=IsPointerOver}"
+          Canvas.Left="50"
+          Canvas.Top="50"
+          ColumnDefinitions="Auto,Auto"
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+          ZIndex="2"
+          Background="Gray">
+      <Label Grid.Column="0" Grid.Row="0">Pan</Label>
+      <Label Grid.Column="1" Grid.Row="0">Right mouse button</Label>
+      <Label Grid.Column="0" Grid.Row="1">Zoom</Label>
+      <Label Grid.Column="1" Grid.Row="1">Mouse wheel</Label>
+      <Label Grid.Column="0" Grid.Row="2">Zoom by rectangle</Label>
+      <Label Grid.Column="1" Grid.Row="2">Ctrl+Right mouse button, Middle mouse button</Label>
+      <Label Grid.Column="0" Grid.Row="3">Reset</Label>
+      <Label Grid.Column="1" Grid.Row="3">Ctrl+Right mouse button double-click, Middle mouse button double-click</Label>
+      <Label Grid.Column="0" Grid.Row="4">Show ‘tracker’</Label>
+      <Label Grid.Column="1" Grid.Row="4">Left mouse button</Label>
+      <Label Grid.Column="0" Grid.Row="5">Reset axes</Label>
+      <Label Grid.Column="1" Grid.Row="5">‘A’, Home</Label>
+    </Grid>
+    <ScrollViewer Canvas.Top="50" 
+                  Canvas.Left="20"
+                  MaxHeight="850" 
+                  MaxWidth="1500" 
+                  ZIndex="1">
+      <StackPanel x:Name="PlotStack" Margin="30">
+
+      </StackPanel>
+    </ScrollViewer>
+  </Canvas>
+</UserControl>

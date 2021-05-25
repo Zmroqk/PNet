@@ -33,7 +33,7 @@ namespace PNetService
                 string path = Path.Combine(Config.Instance.OutputPath, 
                     Manager.DestinationHost.ToString(), 
                     DateTime.Today.ToString("yyyy_MM_dd") + "___" + pt.IpAddress.ToString().Replace('.', '_'));
-                FileStreams.Add(pt, new FileStream(path, FileMode.Append));
+                FileStreams.Add(pt, new FileStream(path, FileMode.Append, FileAccess.Write));
                 LogTest(pt);
             }
         }
@@ -51,7 +51,7 @@ namespace PNetService
                     ObservableCollection<PingData> collection = (ObservableCollection<PingData>)sender;
                     foreach (PingData data in e.NewItems)
                     {
-                        sw.WriteLine($"{data.DateTime.ToLongTimeString(),-15} | IP: {data.IPAddress,-40} | Ping: {data.Ping,-4} ");
+                        sw.WriteLine($"{data.DateTime.ToLongTimeString()}|{data.Ping}");
                         collection.Remove(data);
                     }
                     sw.Flush();

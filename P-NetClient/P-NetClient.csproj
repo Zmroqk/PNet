@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>PNetClient</RootNamespace>
+    <AssemblyName>PNetClient</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Images\ServerIcon.png" />
+    <None Remove="Images\TracerouteIcon.png" />
+    <None Remove="Scripts\InstallService.ps1" />
+    <None Remove="Scripts\UninstallService.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\Plusik.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\ServerIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\TracerouteIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Trybik.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\InstallService.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\UninstallService.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.5" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.5" />
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PNetDll\PNetDll.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Plusik.png" />
+    <Resource Include="Plusik.xcf" />
+  </ItemGroup>
+</Project>

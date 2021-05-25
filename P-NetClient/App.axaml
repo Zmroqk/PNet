@@ -1,0 +1,41 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:imaging="clr-namespace:Avalonia.Media.Imaging;assembly=Avalonia.Visuals"
+             xmlns:local="clr-namespace:PNetClient.Converters"
+             x:Class="PNetClient.App">
+    <Application.Styles>
+        <FluentTheme Mode="Dark"/>
+      <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
+    </Application.Styles>
+  <Application.Resources>
+    <imaging:Bitmap x:Key="PlusIcon">
+      <x:Arguments>
+        <x:String>
+          Images/Plusik.png
+        </x:String>
+      </x:Arguments>
+    </imaging:Bitmap>
+    <imaging:Bitmap x:Key="CogIcon">
+      <x:Arguments>
+        <x:String>
+          Images/Trybik.png
+        </x:String>
+      </x:Arguments>
+    </imaging:Bitmap>
+    <imaging:Bitmap x:Key="TestsIcon">
+      <x:Arguments>
+        <x:String>
+          Images/TracerouteIcon.png
+        </x:String>
+      </x:Arguments>
+    </imaging:Bitmap>
+    <imaging:Bitmap x:Key="ServiceIcon">
+      <x:Arguments>
+        <x:String>
+          Images/ServerIcon.png
+        </x:String>
+      </x:Arguments>
+    </imaging:Bitmap>
+    <local:PingModeConverter x:Key="pingModeConverter"/>
+  </Application.Resources>
+</Application>
