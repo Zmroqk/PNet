@@ -57,7 +57,7 @@
                   MaxHeight="850" 
                   MaxWidth="1500" 
                   ZIndex="1">
-      <StackPanel x:Name="PlotStack" Margin="30">
+      <StackPanel x:Name="PlotStack" Margin="30,20,100,0">
 
       </StackPanel>
     </ScrollViewer>

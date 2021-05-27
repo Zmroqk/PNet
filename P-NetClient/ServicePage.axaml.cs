@@ -41,8 +41,8 @@ namespace PNetClient
                     {
                         Plot plot = new Plot();
                         plot.Height = 500;
-                        plot.Width = 1400;
-                        plot.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                        plot.Width = 1300;
+                        plot.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
                         plot.Margin = new Thickness(10);
                         plot.Background = new SolidColorBrush(Color.Parse("DarkGray"));
                         PlotView plotView = (PlotView)this.Resources["PlotView"];
