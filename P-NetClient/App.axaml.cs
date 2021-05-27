@@ -29,6 +29,7 @@ namespace PNetClient
             this.Resources.Add("CogIcon", new Bitmap(path + "Trybik.png"));
             this.Resources.Add("TestsIcon", new Bitmap(path + "TracerouteIcon.png"));
             this.Resources.Add("ServiceIcon", new Bitmap(path + "ServerIcon.png"));
+            this.Resources.Add("TracerouteIcon", new Bitmap(path + "TracerouteIcon.ico"));
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
