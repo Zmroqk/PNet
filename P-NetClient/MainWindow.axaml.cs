@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using System.Collections.Generic;
 
 namespace PNetClient
@@ -26,6 +27,7 @@ namespace PNetClient
             Config.ReadConfiguration();
             CurrentView = new ConfigurationPage();
             Instance = this;
+            Icon = new WindowIcon((Bitmap)App.Current.Resources["TracerouteIcon"]);
 #if DEBUG
             this.AttachDevTools();
 #endif

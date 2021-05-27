@@ -41,8 +41,8 @@ namespace PNetClient
                     {
                         Plot plot = new Plot();
                         plot.Height = 500;
-                        plot.Width = 1400;
-                        plot.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                        plot.Width = 1300;
+                        plot.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
                         plot.Margin = new Thickness(10);
                         plot.Background = new SolidColorBrush(Color.Parse("DarkGray"));
                         PlotView plotView = (PlotView)this.Resources["PlotView"];
@@ -50,9 +50,9 @@ namespace PNetClient
                         plot.DefaultTrackerTemplate = plotView.DefaultTrackerTemplate;
                         Axis xAxis = new DateTimeAxis();
                         xAxis.Key = "DateTimeAxis";
-                        xAxis.StringFormat = "|MM.dd HH.mm.ss|";
+                        xAxis.StringFormat = "|MM.dd HH.mm|";
                         xAxis.FontSize = 12;
-                        xAxis.Minimum = OxAxis.DateTimeAxis.ToDouble(DateTime.Now.AddDays(-1));
+                        xAxis.Minimum = OxAxis.DateTimeAxis.ToDouble(DateTime.Now.AddHours(-1));
                         xAxis.MaximumRange = 0.2d;
                         xAxis.AbsoluteMaximum = OxAxis.DateTimeAxis.ToDouble(DateTime.Now.AddHours(1));
                         Axis yAxis = new LinearAxis();

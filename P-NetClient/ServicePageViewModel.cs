@@ -27,7 +27,7 @@ namespace PNetClient
                 }
                 else if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    di = new DirectoryInfo("/var/log/PNet");
+                    di = new DirectoryInfo("/var/log/PNet.d");
                 }
                 else
                 {

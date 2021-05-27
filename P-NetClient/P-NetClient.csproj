@@ -5,9 +5,12 @@
     <Nullable>enable</Nullable>
     <RootNamespace>PNetClient</RootNamespace>
     <AssemblyName>PNetClient</AssemblyName>
+    <ApplicationIcon>Images\TracerouteIcon.ico</ApplicationIcon>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Images\ServerIcon.png" />
+    <None Remove="Images\TracerouteIcon.ico" />
     <None Remove="Images\TracerouteIcon.png" />
     <None Remove="Scripts\InstallService.ps1" />
     <None Remove="Scripts\UninstallService.ps1" />
@@ -17,6 +20,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\ServerIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\TracerouteIcon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\TracerouteIcon.png">
