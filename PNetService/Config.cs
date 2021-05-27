@@ -38,11 +38,22 @@ namespace PNetService
             if (Instance == null)
             {
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
-                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
+                {
+                    Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText("/etc/PNet"));
+                    if (!File.Exists("/etc/PNet"))
+                    {
+                        File.WriteAllText("/etc/PNet", JsonSerializer.Serialize(Instance));
+                    }                   
+                }
+                    
                 else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");
                     Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(path + "\\PNet.json"));
+                    if (!File.Exists(path + "\\PNet.json"))
+                    {
+                        File.WriteAllText(path + "\\PNet.json", JsonSerializer.Serialize(Instance));
+                    }
                 }
                     
             }              

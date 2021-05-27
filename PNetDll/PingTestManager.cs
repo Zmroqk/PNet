@@ -208,7 +208,7 @@ namespace PNetDll
             do
             {
                 pr = ping.Send(DestinationHost, 1000, new byte[32], new PingOptions() { Ttl = ttl });
-                if(!IPs.Contains(pr.Address))
+                if (!IPs.Contains(pr.Address))
                     IPs.Add(pr.Address);
                 if(pr.Status != IPStatus.Success)
                     ttl++;
@@ -220,12 +220,16 @@ namespace PNetDll
                 int actualI = i;
                 pings.Add(Task.Run(() =>
                 {
-                    Ping ping = new Ping();
-                    PingReply pr;
-                    pr = ping.Send(IPs[actualI], 2000);
-                    if (pr.Status == IPStatus.Success)
-                        return new PingTest(pr.Address);
-                    return null;
+                    try
+                    {
+                        Ping ping = new Ping();
+                        PingReply pr;
+                        pr = ping.Send(IPs[actualI], 2000);
+                        if (pr.Status == IPStatus.Success)
+                            return new PingTest(pr.Address);
+                        return null;
+                    }
+                    catch (Exception e) { return null; }                  
                 }));
             }
             Task<PingTest>[] pingsTasks = pings.ToArray();

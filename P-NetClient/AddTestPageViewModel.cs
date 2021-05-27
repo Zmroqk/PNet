@@ -13,6 +13,7 @@ using Avalonia;
 using Avalonia.Threading;
 using Avalonia.Media;
 using Avalonia.Styling;
+using System.Net.Sockets;
 
 namespace PNetClient
 {
@@ -51,15 +52,25 @@ namespace PNetClient
                     hostEntry = Dns.GetHostEntry(dropDownSelection);
                 else
                 {
-                    hostEntry = Dns.GetHostEntry(HostOrAddress);
-                    if (!SavedHosts.Contains(HostOrAddress))
+                    try
                     {
-                        SavedHosts.Add(HostOrAddress);
-                        SaveHosts();
+                        hostEntry = Dns.GetHostEntry(HostOrAddress);
+                    }
+                    catch(SocketException e)
+                    {
+                        hostEntry = new IPHostEntry();
+                        IPAddress address;
+                        if(IPAddress.TryParse(HostOrAddress, out address))
+                            hostEntry.AddressList = new IPAddress[] { address };
                     }
                 }
                 if (hostEntry.AddressList.Length > 0)
                 {
+                    if (!SavedHosts.Contains(HostOrAddress) && !string.IsNullOrEmpty(HostOrAddress))
+                    {
+                        SavedHosts.Add(HostOrAddress);
+                        SaveHosts();
+                    }
                     PingTestManager pingTestManager = new PingTestManager(hostEntry.AddressList[0], Config.Instance.PingLogValue, Config.Instance.Interval,
                                                                         Config.Instance.UseTraceroute, Config.Instance.PingMode, Config.Instance.ErrorsCount,
                                                                         Config.Instance.ReconnectInterval, true);
