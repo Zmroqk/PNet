@@ -11,6 +11,8 @@ namespace PNetClient
 {
     public class App : Application
     {
+        public static string? AppExecutablePath { get; private set; }
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -24,7 +26,8 @@ namespace PNetClient
                 delimiter = '\\';
             else if (Environment.OSVersion.Platform == PlatformID.Unix)
                 delimiter = '/';
-            string path = location.Substring(0, location.LastIndexOf(delimiter)) + "/Images/";
+            AppExecutablePath = location.Substring(0, location.LastIndexOf(delimiter));
+            string path = AppExecutablePath + "/Images/";
             this.Resources.Add("PlusIcon", new Bitmap(path + "Plusik.png"));
             this.Resources.Add("CogIcon", new Bitmap(path + "Trybik.png"));
             this.Resources.Add("TestsIcon", new Bitmap(path + "TracerouteIcon.png"));

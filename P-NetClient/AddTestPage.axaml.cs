@@ -36,6 +36,12 @@ namespace PNetClient
                 string? selection = (string?)e.AddedItems[0];
                 if(selection != null)
                 {
+                    if (selection.Equals("Unselect"))
+                    {
+                        ((DropDown)sender).SelectedItem = null;
+                        ViewModel.dropDownSelection = null;
+                        return;
+                    }                     
                     ViewModel.dropDownSelection = selection;
                 }
             }

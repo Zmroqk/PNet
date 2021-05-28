@@ -25,7 +25,7 @@ namespace PNetClient
             InitializeComponent();
             DataContext = this;
             Config.ReadConfiguration();
-            CurrentView = new ConfigurationPage();
+            CurrentView = new AddTestPage();
             Instance = this;
             Icon = new WindowIcon((Bitmap)App.Current.Resources["TracerouteIcon"]);
 #if DEBUG
