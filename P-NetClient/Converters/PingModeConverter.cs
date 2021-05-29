@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace PNetClient.Converters
 {
+    /// <summary>
+    /// Xaml converter for PingMode to string
+    /// </summary>
     public class PingModeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace PNetService
 {
+    /// <summary>
+    /// Run service worker
+    /// </summary>
     public class ServiceWorker : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,7 +43,8 @@ namespace PNetService
             }
             _ = Task.Run(() =>
               {
-                  ResetLoggersAtNewDay(loggers);
+                  while(true)
+                    ResetLoggersAtNewDay(loggers);
               });
 
             while (!stoppingToken.IsCancellationRequested)
@@ -49,6 +53,10 @@ namespace PNetService
             }
         }
 
+        /// <summary>
+        /// Reset loggers after midnight
+        /// </summary>
+        /// <param name="loggers">Dictionary of managers for which loggers should be restarted</param>
         private async void ResetLoggersAtNewDay(Dictionary<PingTestManager, Logger> loggers)
         {
             await Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000);
@@ -56,8 +64,8 @@ namespace PNetService
             {
                 loggers[manager].Dispose();
                 loggers[manager] = new Logger(manager);
+                loggers[manager].StartLogging();
             }
-            ResetLoggersAtNewDay(loggers);
         }
     }
 }

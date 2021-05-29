@@ -10,12 +10,26 @@ using System.Collections.ObjectModel;
 
 namespace PNetService
 {
+
+    /// <summary>
+    /// Logs pings data from tests
+    /// </summary>
     public class Logger : IDisposable
     {
+        /// <summary>
+        /// Manager for this instance of logger
+        /// </summary>
         PingTestManager Manager { get; set; }
+        /// <summary>
+        /// File stream to specific PingTests
+        /// </summary>
         Dictionary<PingTest, FileStream> FileStreams { get; set; }
         Dictionary<PingTest, CancellationTokenSource> Tokens { get; set; }
 
+        /// <summary>
+        /// Default constructor, requires specyfing PingTedtManager from which logger should be created
+        /// </summary>
+        /// <param name="manager">Manager from which logger should take data</param>
         public Logger(PingTestManager manager)
         {
             Manager = manager;
@@ -23,6 +37,9 @@ namespace PNetService
             Tokens = new Dictionary<PingTest, CancellationTokenSource>();
         }
 
+        /// <summary>
+        /// Initialise logging
+        /// </summary>
         public void StartLogging()
         {
             DirectoryInfo di = new DirectoryInfo(Path.Combine(Config.Instance.OutputPath, Manager.DestinationHost.ToString()));
@@ -38,6 +55,10 @@ namespace PNetService
             }
         }
 
+        /// <summary>
+        /// Create log test for specific PingTest
+        /// </summary>
+        /// <param name="test"></param>
         async void LogTest(PingTest test)
         {
             PingTest pt = test;

@@ -28,6 +28,9 @@ namespace PNetClient
             SavedHosts = new ObservableCollection<string>();
         }
 
+        /// <summary>
+        /// Try loading saved hosts from file
+        /// </summary>
         public void TryLoadSavedHosts()
         {
             try
@@ -44,11 +47,17 @@ namespace PNetClient
             catch (Exception e) { }                    
         }
 
+        /// <summary>
+        /// Save SavedHosts to file
+        /// </summary>
         public void SaveHosts()
         {
             File.WriteAllText(".hosts", JsonSerializer.Serialize(SavedHosts));
         }
 
+        /// <summary>
+        /// Start tests for selected or provided host
+        /// </summary>
         public void StartTest()
         {
             try
