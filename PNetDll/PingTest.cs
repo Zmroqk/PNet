@@ -108,7 +108,7 @@ namespace PNetDll
         /// <summary>
         /// Percent of packets lost
         /// </summary>
-        public float PacketLoss
+        public double PacketLoss
         {
             get
             {
@@ -147,7 +147,7 @@ namespace PNetDll
         long _MaxPing;
         int _PacketsSend;
         int _PacketsReceived;
-        float _PacketLoss;
+        double _PacketLoss;
         string _Hostname;
 
         /// <summary>
@@ -230,12 +230,12 @@ namespace PNetDll
         void OnPingCompleted(Task<PingReply> pr)
         {
             PingReply pingReply = pr.Result;
-            int currentIndex = 0;
+            int currentIndex = index;
             if (pingReply.Buffer.Length != 0)
                 currentIndex = BitConverter.ToInt32(pingReply.Buffer);
-            PacketsReceived++;
             if (pingReply.Status == IPStatus.Success)
             {
+                PacketsReceived++;
                 connectionErrors = 0;
                 if(lastIndex < currentIndex)
                 {
@@ -254,7 +254,7 @@ namespace PNetDll
                 }
                 connectionErrors++;
             }
-            PacketLoss = 100 - (PacketsReceived / (float)PacketsSend) * 100;
+            PacketLoss = Math.Round(100 - (PacketsReceived / (float)PacketsSend) * 100, 3);
             lock (lastPings)
             {
                 lastPings.Add(pingReply.RoundtripTime);
@@ -278,7 +278,7 @@ namespace PNetDll
                 IPAddress = IpAddress,
                 IPAddressString = IpAddress.ToString(),
                 Hostname = Hostname,
-                Index = index,
+                Index = currentIndex,
                 Ping = pingReply.RoundtripTime,
                 Success = pingReply.Status == IPStatus.Success,
                 ErrorCount = connectionErrors

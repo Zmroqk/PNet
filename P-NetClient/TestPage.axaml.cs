@@ -45,6 +45,9 @@ namespace PNetClient
             PingPlot.ActualModel.Axes[0].Title = "Index";
             PingPlot.ActualModel.Axes[1].MajorStep = 50;
             PingPlot.ActualModel.Axes[1].Title = "Ping";
+            PlotView plotView = (PlotView)App.Current.Resources["PlotView"];
+            plotView.Model = PingPlot.ActualModel;
+            PingPlot.DefaultTrackerTemplate = plotView.DefaultTrackerTemplate;
         }
 
         protected override void OnInitialized()
@@ -74,7 +77,7 @@ namespace PNetClient
                         foreach (PingData pd in e.NewItems)
                         {
                             Values.Add(new DataPoint(pd.Index, pd.Ping));                        
-                            while (Values.Count > 100)
+                            while (Values.Count > 200)
                                 Values.RemoveAt(0);
                         }
                         PingPlot.InvalidatePlot(true);

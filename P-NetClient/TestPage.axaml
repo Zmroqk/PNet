@@ -82,18 +82,21 @@
     </ListBox>
     <oxy:Plot Grid.Column="0"
               Grid.Row="3"
-              Grid.ColumnSpan="2"
+              Grid.ColumnSpan="3"
               Height="250"
-              Width="600"
+              Width="1000"
               HorizontalAlignment="Left"
               VerticalAlignment="Center"
-              x:Name="PingPlot"
+              x:Name="PingPlot"              
               >
       <oxy:Plot.Series>
         <oxy:LineSeries        
             DataFieldX="Index"
             DataFieldY="Ping"       
             Color="Red"
+            MarkerType="Circle"
+            MarkerSize="3"
+            StrokeThickness="0.3"
             />
       </oxy:Plot.Series>
     </oxy:Plot>

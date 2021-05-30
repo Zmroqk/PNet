@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace PNetClient
 {
+    /// <summary>
+    /// View model for loading data for charts
+    /// </summary>
     public class ServicePageViewModel
     {
         ServicePage ServicePage;      
@@ -16,6 +19,10 @@ namespace PNetClient
             ServicePage = servicePage;
         }
 
+        /// <summary>
+        /// Read data from all files created by service
+        /// </summary>
+        /// <returns>Dictionary of hosts and List of data connected to them</returns>
         public Task<Dictionary<string, List<(DateTime Time, int Ping)>>> ReadDataAsync()
         {
             return Task.Run(() => {

@@ -25,44 +25,59 @@ namespace PNetClient
 
         public AddTestPageViewModel()
         {
-            SavedHosts = new ObservableCollection<string>();        
+            SavedHosts = new ObservableCollection<string>();
         }
 
+        /// <summary>
+        /// Try loading saved hosts from file
+        /// </summary>
         public void TryLoadSavedHosts()
         {
-            if (!File.Exists(".hosts"))
-                return;
-            ObservableCollection<string> savedHosts = JsonSerializer.Deserialize<ObservableCollection<string>>(File.ReadAllText(".hosts"));
-            if (savedHosts != null)
-                foreach (string host in savedHosts)
-                SavedHosts.Add(host);
+            try
+            {
+                if (!File.Exists(".hosts"))
+                    return;
+                ObservableCollection<string> savedHosts = JsonSerializer.Deserialize<ObservableCollection<string>>(File.ReadAllText(".hosts"));
+                if (savedHosts.Count > 0)
+                    savedHosts.Insert(0, "Unselect");
+                if (savedHosts != null)
+                    foreach (string host in savedHosts)
+                        SavedHosts.Add(host);
+            }
+            catch (Exception e) { }                    
         }
 
+        /// <summary>
+        /// Save SavedHosts to file
+        /// </summary>
         public void SaveHosts()
         {
             File.WriteAllText(".hosts", JsonSerializer.Serialize(SavedHosts));
         }
 
+        /// <summary>
+        /// Start tests for selected or provided host
+        /// </summary>
         public void StartTest()
         {
             try
-            {
+            {              
                 IPHostEntry hostEntry;
-                if (dropDownSelection != null)
-                    hostEntry = Dns.GetHostEntry(dropDownSelection);
-                else
+                try
                 {
-                    try
-                    {
+                    if (!string.IsNullOrEmpty(dropDownSelection))
+                        hostEntry = Dns.GetHostEntry(dropDownSelection);
+                    else
                         hostEntry = Dns.GetHostEntry(HostOrAddress);
-                    }
-                    catch(SocketException e)
-                    {
-                        hostEntry = new IPHostEntry();
-                        IPAddress address;
-                        if(IPAddress.TryParse(HostOrAddress, out address))
-                            hostEntry.AddressList = new IPAddress[] { address };
-                    }
+                }
+                catch (SocketException e)
+                {
+                    hostEntry = new IPHostEntry();
+                    IPAddress address;
+                    if (IPAddress.TryParse(HostOrAddress, out address))
+                        hostEntry.AddressList = new IPAddress[] { address };
+                    if (IPAddress.TryParse(dropDownSelection, out address))
+                        hostEntry.AddressList = new IPAddress[] { address };
                 }
                 if (hostEntry.AddressList.Length > 0)
                 {
@@ -74,15 +89,14 @@ namespace PNetClient
                     PingTestManager pingTestManager = new PingTestManager(hostEntry.AddressList[0], Config.Instance.PingLogValue, Config.Instance.Interval,
                                                                         Config.Instance.UseTraceroute, Config.Instance.PingMode, Config.Instance.ErrorsCount,
                                                                         Config.Instance.ReconnectInterval, true);
-                    Logger logger = new Logger(pingTestManager);                   
+                    Logger logger = new Logger(pingTestManager);
                     Button btnTest = new Button()
                     {
                         Content = pingTestManager.DestinationHost.ToString(),
                         Margin = new Thickness(20, 0, 0, 0),
                         Width = 120,
                         MaxWidth = 120,
-                        HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                        Background = new SolidColorBrush(Color.Parse("Gray"), 0.2f)
+                        HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center
                     };
                     TestPage testPage = new TestPage() { Manager = pingTestManager, Logger = logger, CallerButton = btnTest };
                     MainWindow.TestPages.Add(testPage);
