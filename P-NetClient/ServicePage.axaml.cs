@@ -45,7 +45,7 @@ namespace PNetClient
                         plot.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
                         plot.Margin = new Thickness(10);
                         plot.Background = new SolidColorBrush(Color.Parse("DarkGray"));
-                        PlotView plotView = (PlotView)this.Resources["PlotView"];
+                        PlotView plotView = (PlotView)App.Current.Resources["PlotView"];
                         plotView.Model = plot.ActualModel;
                         plot.DefaultTrackerTemplate = plotView.DefaultTrackerTemplate;
                         Axis xAxis = new DateTimeAxis();
