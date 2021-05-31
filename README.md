@@ -1,4 +1,9 @@
 # PNet
+<a href="https://github.com/Zmroqk/PNet/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Zmroqk/PNet"></a>
+<a href="https://github.com/Zmroqk/PNet/releases/latest"><img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/Zmroqk/PNet"></a>
+<a href="https://github.com/Zmroqk/PNet/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/Zmroqk/PNet/total"></a>
+<a href="https://github.com/Zmroqk/PNet/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/downloads/Zmroqk/PNet/latest/total"></a>
+</br>
 PNet is an application that allows you for:
 <li> Ping tests to hosts
 <li> Traceroute tests to hosts
