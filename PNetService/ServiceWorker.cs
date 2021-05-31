@@ -43,8 +43,11 @@ namespace PNetService
             }
             _ = Task.Run(() =>
               {
-                  while(true)
-                    ResetLoggersAtNewDay(loggers);
+                  while (true)
+                  {
+                      ResetLoggersAtNewDay(loggers);
+                      Task.Delay((int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalMilliseconds + 1000).Wait();
+                  }                    
               });
 
             while (!stoppingToken.IsCancellationRequested)
