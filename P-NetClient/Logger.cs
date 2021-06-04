@@ -94,7 +94,8 @@ namespace PNetClient
 
         public void Dispose()
         {
-            FileStream.Close();
+            if(FileStream != null)
+                FileStream.Close();
             foreach (PingTest pt in Manager.History.Keys)
                 Manager.History[pt].CollectionChanged -= HistoryCollectionChanged;
         }

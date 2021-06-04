@@ -22,6 +22,7 @@ namespace PNetClient
 
         public ObservableCollection<DataPoint> Values { get; set; }
 
+        bool TestInitializationCompleted { get; set; }
 
         public static readonly StyledProperty<string> TestNameProperty =
             AvaloniaProperty.Register<MenuRow, string>(nameof(TestName));
@@ -62,6 +63,7 @@ namespace PNetClient
                 {
                     Manager.History[pt].CollectionChanged += TestPage_CollectionChanged;
                     ListBox.Items = Manager.PingTests;
+                    TestInitializationCompleted = true;
                 });
             });
         }
@@ -89,7 +91,8 @@ namespace PNetClient
         private void btnStopTest(object sender, RoutedEventArgs e)
         {
             PingTest pt = Manager.PingTests.Find((pt) => pt.IpAddress.MapToIPv4().Equals(Manager.DestinationHost.MapToIPv4()));
-            Manager.History[pt].CollectionChanged -= TestPage_CollectionChanged;
+            if(TestInitializationCompleted)
+                Manager.History[pt].CollectionChanged -= TestPage_CollectionChanged;
             Logger.Dispose();
             Manager.Dispose();
             MainWindow.TestPages.Remove(this);
