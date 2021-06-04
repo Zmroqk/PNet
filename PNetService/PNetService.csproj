@@ -5,6 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>PNetService</AssemblyName>
     <RootNamespace>PNetService</RootNamespace>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
