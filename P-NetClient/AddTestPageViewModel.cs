@@ -52,7 +52,7 @@ namespace PNetClient
         /// </summary>
         public void SaveHosts()
         {
-            File.WriteAllText(".hosts", JsonSerializer.Serialize(SavedHosts));
+            File.WriteAllText(".hosts", JsonSerializer.Serialize(SavedHosts.Where((elem) => elem != "Unselect")));
         }
 
         /// <summary>

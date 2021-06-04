@@ -51,7 +51,7 @@ namespace PNetClient
                             List<(DateTime Time, int Ping)> Pings = new List<(DateTime Time, int Ping)>();
                             string[] fileName = fi.Name.Split("___");
                             string host = fileName[1].Replace('_', '.');
-                            StreamReader sr = fi.OpenText();
+                            StreamReader sr = new StreamReader(fi.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                             while (!sr.EndOfStream)
                             {
                                 string? line = sr.ReadLine();
