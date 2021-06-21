@@ -9,35 +9,35 @@ using PNetDll.Sqlite.Models;
 
 namespace PNetDll.Sqlite
 {
-    public class Dates
+    public class DatesQuery
     {
         SqliteConnection connection;
         
-        public Dates(SqliteConnection connection)
+        public DatesQuery(SqliteConnection connection)
         {
             this.connection = connection;
         }
 
-        public async Task<List<DateModel>> GetDatesAsync()
+        public async Task<List<Models.Dates>> GetDatesAsync()
         {
-            return connection.QueryAsync<DateModel>("SELECT * FROM Dates").Result.ToList();
+            return connection.QueryAsync<Models.Dates>("SELECT * FROM Dates").Result.ToList();
         }
 
-        public async Task<List<DateModel>> GetDatesAsync(DateTime from, bool reverse=false)
+        public async Task<List<Models.Dates>> GetDatesAsync(DateTime from, bool reverse=false)
         {
             
             SqliteCommand cmd = connection.CreateCommand();
             if(reverse)
-                return connection.QueryAsync<DateModel>("SELECT * FROM Dates WHERE Date <= @date", new { date = from.Ticks }).Result.ToList();
+                return connection.QueryAsync<Models.Dates>("SELECT * FROM Dates WHERE Date <= @date", new { date = from.Ticks }).Result.ToList();
             else
-                return connection.QueryAsync<DateModel>("SELECT * FROM Dates WHERE Date >= @date", new { date = from.Ticks }).Result.ToList();
+                return connection.QueryAsync<Models.Dates>("SELECT * FROM Dates WHERE Date >= @date", new { date = from.Ticks }).Result.ToList();
         }
 
-        public async Task<List<DateModel>> GetDatesAsync(DateTime from, DateTime to)
+        public async Task<List<Models.Dates>> GetDatesAsync(DateTime from, DateTime to)
         {
             if (from < to)
                 throw new ArgumentException("From date cannot be older that to date");
-            return connection.QueryAsync<DateModel>("SELECT * FROM Dates WHERE Date <= @to AND Date >= @from", 
+            return connection.QueryAsync<Models.Dates>("SELECT * FROM Dates WHERE Date <= @to AND Date >= @from", 
                 new { 
                     from = from.Ticks,
                     to = to.Ticks

@@ -30,7 +30,7 @@ namespace PNetUnitTests
   
         private void _2_GetDate()
         {
-            List<DateModel> dates = DatabaseConnection.Db.Dates.GetDatesAsync(dateTimeTest).Result;
+            List<Dates> dates = DatabaseConnection.Db.Dates.GetDatesAsync(dateTimeTest).Result;
             Assert.AreEqual(dateTimeTest, new DateTime(dates[0].Date));
         }
 

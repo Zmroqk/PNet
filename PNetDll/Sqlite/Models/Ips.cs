@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PNetDll.Sqlite.Models
 {
-    public class DateModel
+    public class Ips
     {
-        public uint DateId;
-        public long Date;
+        public uint IpId { get; set; }
+        public string IPAddress { get; set; }
     }
 }

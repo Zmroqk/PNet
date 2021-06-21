@@ -9,11 +9,11 @@ namespace PNetDll.Sqlite
 {
     public class DatabaseModel
     {
-        public Dates Dates { get; private set; }
+        public DatesQuery Dates { get; private set; }
 
         public DatabaseModel(SqliteConnection connection)
         {
-            Dates = new Dates(connection);
+            Dates = new DatesQuery(connection);
         }
     }
 }
