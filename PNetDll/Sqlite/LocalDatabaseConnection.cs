@@ -28,7 +28,7 @@ namespace PNetDll.Sqlite
             SqliteCommand cmd = Connection.CreateCommand();
             cmd.CommandText = firstCmd;
             _ = await cmd.ExecuteNonQueryAsync();
-            string versionCheckCmd = @"SELECT Version FROM Versions LIMIT 1";
+            string versionCheckCmd = @"SELECT Version FROM Version LIMIT 1";
             cmd = Connection.CreateCommand();
             cmd.CommandText = versionCheckCmd;
             string version = (string)await cmd.ExecuteScalarAsync();

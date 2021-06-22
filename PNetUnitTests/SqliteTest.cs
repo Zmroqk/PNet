@@ -21,22 +21,33 @@ namespace PNetUnitTests
             dateTimeTest = DateTime.Now;
         }
 
-        [TestMethod("Test insert and get")]
-        public void test1()
+        [TestMethod("Test insert and get for host")]
+        public void test_hosts()
         {
-            _1_InsertDate();
-            _2_GetDate();
-        }
-  
-        private void _2_GetDate()
-        {
-            List<Dates> dates = DatabaseConnection.Db.Dates.GetDatesAsync(dateTimeTest).Result;
-            Assert.AreEqual(dateTimeTest, new DateTime(dates[0].Date));
+            Random r = new Random();       
+            string hostname = r.Next().ToString();
+            InsertHost(hostname);
+            GetHost(hostname);
         }
 
-        private void _1_InsertDate()
+        [TestMethod("Test host join ips")]
+        public void test_join()
         {
-            Assert.AreEqual(1, DatabaseConnection.Db.Dates.AddDateAsync(dateTimeTest).Result);
+            List<Hosts> hosts = DatabaseConnection.Db.Hosts.GetHosts("HostnameTest").JoinIps().Execute();
+            Assert.AreEqual(1, hosts.Count);
+            Assert.AreEqual("192.168.1.0", hosts[0].IPAddress);
+        }
+
+        private void GetHost(string hostname)
+        {
+            List<Hosts> hosts = DatabaseConnection.Db.Hosts.GetHosts(hostname).ExecuteAsync().Result;
+            Assert.AreEqual(1, hosts.Count);
+            Assert.AreEqual(hostname, hosts[0].Hostname);
+        }
+
+        private void InsertHost(string hostname)
+        {
+            Assert.AreEqual(1, DatabaseConnection.Db.Hosts.AddHostAsync(hostname).Result);
         }
     }
 }

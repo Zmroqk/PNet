@@ -10,7 +10,7 @@ namespace PNetDll.Sqlite.Models
     {
         public uint DiscId { get; set; }
         public uint IPId { get; set; }
-        public uint DisconnectDateId { get; set; }
-        public uint ReconnectDateId { get; set; }
+        public long DisconnectDate { get; set; }
+        public long ReconnectDate { get; set; }
     }
 }

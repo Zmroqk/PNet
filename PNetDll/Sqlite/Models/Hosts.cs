@@ -10,5 +10,7 @@ namespace PNetDll.Sqlite.Models
     {
         public uint HostId { get; set; }
         public string Hostname { get; set; }
+        public uint? IpId { get; set; }
+        public string IPAddress { get; set; }
     }
 }
