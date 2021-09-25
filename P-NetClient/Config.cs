@@ -59,7 +59,7 @@ namespace PNetClient
         /// </summary>
         public void SaveConfiguration()
         {
-            File.WriteAllText(App.AppExecutablePath + ".config", JsonSerializer.Serialize(this));
+            File.WriteAllText(Path.Combine(App.AppExecutablePath, ".config"), JsonSerializer.Serialize(this));
             foreach (TestPage tp in MainWindow.TestPages)
             {
                 tp.Manager.Interval = Interval;
