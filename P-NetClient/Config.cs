@@ -74,9 +74,9 @@ namespace PNetClient
         /// </summary>
         public static void ReadConfiguration()
         {
-            if (File.Exists(App.AppExecutablePath + ".config"))
+            if (File.Exists(Path.Combine(App.AppExecutablePath, ".config")))
             {
-                Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText(App.AppExecutablePath + ".config"));
+                Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText(Path.Combine(App.AppExecutablePath, ".config")));
                 if (config != null)
                     Instance = config;
             }

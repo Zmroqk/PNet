@@ -86,7 +86,7 @@
       <!-- Use File Save -->
       <Label Grid.Column="0"
              Grid.Row="5"
-             Content="Save Mode: "
+             Content="Use file logging: "
              HorizontalContentAlignment="Right"
              Margin="5"/>
       <CheckBox Grid.Column="1"
