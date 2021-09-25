@@ -12,7 +12,7 @@ namespace PNetClient.Converters
     /// <summary>
     /// Xaml converter for PingMode to string
     /// </summary>
-    public class PingModeConverter : IValueConverter
+    public class EnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

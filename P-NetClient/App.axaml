@@ -39,7 +39,7 @@
       </x:Arguments>
     </imaging:Bitmap>
     -->
-    <local:PingModeConverter x:Key="pingModeConverter"/>
+    <local:EnumConverter x:Key="EnumConverter"/>
     <oxy:PlotView Height="500" Width="500" x:Key="PlotView">
       <oxy:PlotView.DefaultTrackerTemplate>
         <ControlTemplate>

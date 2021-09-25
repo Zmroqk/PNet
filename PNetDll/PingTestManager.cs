@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PNetDll.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -226,14 +227,19 @@ namespace PNetDll
                         PingReply pr;
                         pr = ping.Send(IPs[actualI], 2000);
                         if (pr.Status == IPStatus.Success)
-                            return new PingTest(pr.Address);
+                        {
+                            return new PingTest(pr.Address);                         
+                        }                        
                         return null;
                     }
-                    catch (Exception e) { return null; }                  
+                    catch (Exception e) {
+                        Console.Error.Write(e.Message);
+                        return null; 
+                    }                  
                 }));
             }
             Task<PingTest>[] pingsTasks = pings.ToArray();
-            Task.WaitAll(pingsTasks);
+            Task.WaitAll(pingsTasks);          
             foreach(Task<PingTest> pt in pingsTasks)
             {
                 if (pt.Result != null)
@@ -251,7 +257,7 @@ namespace PNetDll
         /// </summary>
         /// <param name="sender">Test that called this event</param>
         /// <param name="pingData">Ping data</param>
-        private void PingCompleted(object sender, PingData pingData)
+        private async void PingCompleted(object sender, PingData pingData)
         {
             PingTest pt = (PingTest)sender;
             if (pingData.ErrorCount > ErrorsCount)
@@ -272,7 +278,11 @@ namespace PNetDll
                     blockedPingsTimer.Interval = ReconnectInterval;
                     blockedPingsTimer.Elapsed += BlockedPingsTimer_Elapsed;
                     blockedPingsTimer.Start();
-                }                
+                }
+                PingContext db = Database.Db;
+                Sqlite.Models.Ip ip = db.Ips.Where(ip => ip.IPAddress == pingData.IPAddress.ToString()).FirstOrDefault();
+                db.Disconnects.Add(new Sqlite.Models.Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = ip });
+                db.SaveChanges();
             }
             if(pingData.Success)
             {

@@ -1,11 +1,6 @@
 ﻿using PNetDll;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace PNetClient
 {
@@ -38,6 +33,11 @@ namespace PNetClient
         /// Ping mode used by tests
         /// </summary>
         public PingMode PingMode { get; set; } = PingMode.Asynchronously;
+
+        /// <summary>
+        /// Save mode used by tests
+        /// </summary>
+        public bool UseFileSave { get; set; } = false;
 
         /// <summary>
         /// Errors after which tests switches to reconnect mode
@@ -79,7 +79,7 @@ namespace PNetClient
                 Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText(App.AppExecutablePath + ".config"));
                 if (config != null)
                     Instance = config;
-            }             
+            }
         }
     }
 }

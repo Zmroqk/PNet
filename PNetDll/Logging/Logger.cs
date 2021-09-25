@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PNetDll.Logging
 {
-    public abstract class Logger
+    public abstract class Logger : IDisposable
     {
         public PingTestManager Manager { get; }
 
@@ -16,5 +16,7 @@ namespace PNetDll.Logging
         }
 
         public abstract void StartAutomaticLogging();
+
+        public abstract void Dispose();
     }
 }

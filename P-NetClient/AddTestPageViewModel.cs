@@ -14,6 +14,7 @@ using Avalonia.Threading;
 using Avalonia.Media;
 using Avalonia.Styling;
 using System.Net.Sockets;
+using PNetDll.Logging;
 
 namespace PNetClient
 {
@@ -89,7 +90,12 @@ namespace PNetClient
                     PingTestManager pingTestManager = new PingTestManager(hostEntry.AddressList[0], Config.Instance.PingLogValue, Config.Instance.Interval,
                                                                         Config.Instance.UseTraceroute, Config.Instance.PingMode, Config.Instance.ErrorsCount,
                                                                         Config.Instance.ReconnectInterval, true);
-                    Logger logger = new Logger(pingTestManager);
+                    List<Logger> loggers = new List<Logger>();
+                    if (Config.Instance.UseFileSave)
+                    {
+                        loggers.Add(new FileLogger(pingTestManager));
+                    }
+                    loggers.Add(new DatabaseLogger(pingTestManager));                
                     Button btnTest = new Button()
                     {
                         Content = pingTestManager.DestinationHost.ToString(),
@@ -98,7 +104,7 @@ namespace PNetClient
                         MaxWidth = 120,
                         HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center
                     };
-                    TestPage testPage = new TestPage() { Manager = pingTestManager, Logger = logger, CallerButton = btnTest };
+                    TestPage testPage = new TestPage() { Manager = pingTestManager, Loggers = loggers, CallerButton = btnTest };
                     MainWindow.TestPages.Add(testPage);
                     MainWindow.Instance.CurrentView = testPage;
                     Menu.Tests.SubmenuStack.Children.Add(btnTest);
