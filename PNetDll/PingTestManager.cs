@@ -39,6 +39,10 @@ namespace PNetDll
         /// </summary>
         List<PingTest> blockedPings;
         /// <summary>
+        /// Disconnects for tests marked as disconnected
+        /// </summary>
+        Dictionary<PingTest, Disconnect> disconnects;
+        /// <summary>
         /// Timer for tests marked as disconnected, used to reconnect tests
         /// </summary>
         Timer blockedPingsTimer;
@@ -125,7 +129,7 @@ namespace PNetDll
         /// <summary>
         /// Database test case model for this test
         /// </summary>
-        TestCase TestCase { get; set; }
+        public TestCase TestCase { get; private set; }
 
         /// <summary>
         /// Create ping tests manager
@@ -151,6 +155,7 @@ namespace PNetDll
             PingTests = new List<PingTest>();
             availablePings = new List<PingTest>();
             blockedPings = new List<PingTest>();
+            disconnects = new Dictionary<PingTest, Disconnect>();
             LogHistory = logHistory;
             //StreamData = streamData;
             if (LogHistory)
@@ -261,13 +266,16 @@ namespace PNetDll
                 foreach(IPAddress iPAddress in IPs)
                 {
                     Ip ip = db.Ips.Where((ip) => ip.IPAddress == iPAddress.ToString()).FirstOrDefault();
-                    ips.Add(ip);
-                    db.Ips.Attach(ip);
+                    if (ip != null)
+                    {
+                        ips.Add(ip);
+                        db.Ips.Attach(ip);
+                    }
                 }
                 TestCase = new TestCase()
                 {
                     DestinationHost = db.Ips.Where((ip) => ip.IPAddress == DestinationHost.ToString()).FirstOrDefault(),
-                    testStarted = DateTime.Now
+                    testStarted = DateTime.Now                 
                 };
                 TestCase.Ips.AddRange(ips);
                 db.TestCases.Add(TestCase);
@@ -296,17 +304,25 @@ namespace PNetDll
                         pingIndex = pingIndex % availablePings.Count;
                 }              
                 pt.PingCompleted += PingReconnectAttemptCompleted;
-                if(blockedPingsTimer != null)
+                using (PingContext db = Database.Db)
+                {
+                    db.Ips.Attach(pingData.Ip);
+                    db.TestCases.Attach(TestCase);
+                    lock (blockedPings)
+                    {
+                        Disconnect dc = new Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = pingData.Ip, Test = TestCase };
+                        disconnects.Add(pt, dc);
+                        db.Disconnects.Add(dc);
+                    }                                       
+                    db.SaveChanges();
+                }
+                if (blockedPingsTimer != null)
                 {
                     blockedPingsTimer = new Timer();
                     blockedPingsTimer.Interval = ReconnectInterval;
                     blockedPingsTimer.Elapsed += BlockedPingsTimer_Elapsed;
                     blockedPingsTimer.Start();
-                }
-                PingContext db = Database.Db;
-                Sqlite.Models.Ip ip = db.Ips.Where(ip => ip.IPAddress == pingData.IPAddress.ToString()).FirstOrDefault();
-                db.Disconnects.Add(new Sqlite.Models.Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = ip });
-                db.SaveChanges();
+                }               
             }
             if(pingData.Success)
             {
@@ -352,8 +368,17 @@ namespace PNetDll
             if (pingData.Success)
             {
                 pt.PingCompleted -= PingReconnectAttemptCompleted;
-                lock(blockedPings)
+                lock (blockedPings)
+                {
                     blockedPings.Remove(pt);
+                    using (PingContext db = Database.Db)
+                    {
+                        Disconnect dc = disconnects[pt];
+                        db.Attach(dc);
+                        dc.ReconnectDate = DateTime.Now;
+                        db.SaveChanges();
+                    }                    
+                }                  
                 lock (availablePings)
                 {
                     availablePings.Add(pt);

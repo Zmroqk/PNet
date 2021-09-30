@@ -51,16 +51,20 @@ namespace PNetDll.Logging
                 {
                     if (data.Ping >= Manager.PingLogValue)
                     {
-                        PingContext db = Database.Db;
-                        PingDataModel pData = new PingDataModel()
+                        using (PingContext db = Database.Db)
                         {
-                            Date = data.DateTime,
-                            Ip = db.Ips.Where(ip => ip.IpId == data.Ip.IpId).FirstOrDefault(),
-                            Ping = (int)data.Ping,
-                            Success = data.Success
-                        };
-                        db.PingsData.Add(pData);
-                        db.SaveChanges();
+                            db.TestCases.Attach(Manager.TestCase);
+                            PingDataModel pData = new PingDataModel()
+                            {
+                                Date = data.DateTime,
+                                Ip = db.Ips.Where(ip => ip.IpId == data.Ip.IpId).FirstOrDefault(),
+                                TestCase = Manager.TestCase,
+                                Ping = (int)data.Ping,
+                                Success = data.Success
+                            };
+                            db.PingsData.Add(pData);
+                            db.SaveChanges();
+                        }                        
                     }
                         
                 }

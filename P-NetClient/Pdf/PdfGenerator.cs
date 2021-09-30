@@ -9,106 +9,281 @@ using System.IO;
 using PNetDll;
 using PNetDll.Sqlite;
 using PNetDll.Sqlite.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PNetClient.Pdf
 {
     public class PdfGenerator
     {
-        public double margin
+        public double Margin
         {
             set
             {
-                marginLeft = value;
-                marginTop = value;
-                marginRight = value;
-                marginBottom = value;
+                MarginLeft = value;
+                MarginTop = value;
+                MarginRight = value;
+                MarginBottom = value;
             }
         }
-        public double marginLeft { get; set; } = 5;
-        public double marginTop { get; set; } = 5;
-        public double marginRight { get; set; } = 5;
-        public double marginBottom { get; set; } = 5;
+        public double MarginLeft { get; set; } = 5;
+        public double MarginTop { get; set; } = 5;
+        public double MarginRight { get; set; } = 5;
+        public double MarginBottom { get; set; } = 5;
 
-        public double rowHeight { get; set; } = 15;
-        public double fontSize { get; set; } = 10;
+        public double RowHeight { get; set; } = 15;
+        public double FontSize { get; set; } = 10;
+        public double SmallerFontSize { get; set; } = 9;
+        public double RectangleDifference { get; set; } = 40;
 
-        public void GeneratePdf(DateTime startTime, DateTime endTime, Ip ip)
+        TestCase TestCase { get; set; }
+        PdfDocument Document { get; set; }
+        PdfPage CurrentPage { get; set; }
+        double PageWidth { get; set; }
+        double PageHeight { get; set; }
+        XGraphics gfx { get; set; }
+        double CurrentHeight { get; set; }
+        double RectangleWidth { get; set; }
+        XFont Font { get; set; }
+        XFont SmallerFont { get; set; }
+        XFont BoldFont { get; set; }
+
+        public void GeneratePdf(TestCase testCase)
         {
-            if(ip == null)
+            if(testCase == null)
             {
                 throw new PdfGenerationException();
             }
+            TestCase = testCase;
 
-            PdfDocument document = new PdfDocument();
+            Document = new PdfDocument();
             PingContext db = Database.Db;
-            PingDataModel[] pingDatas = db.PingsData.Where((pingData) => ip.IpId == pingData.Ip.IpId &&
-                                                        pingData.Date >= startTime &&
-                                                        pingData.Date <= endTime).OrderBy((pingData) => pingData.PingDataModelId)
-                                                        .ToArray();
+            PingDataModel[] pingDatas = db.PingsData.Include(pingData => pingData.Ip)
+                                                    .Where((pingData) => testCase == pingData.TestCase)
+                                                    .OrderBy((pingData) => pingData.Date)
+                                                    .ToArray();
+            Disconnect[] disconnects = db.Disconnects.Include(dc => dc.ConnectedIp)
+                                                    .Where(dc => dc.Test == testCase)
+                                                    .OrderBy(dc => dc.DisconnectDate)
+                                                    .ToArray();
             double records = pingDatas.Length;
-            PdfPage page = document.AddPage();
-            double pageWidth = page.Width.Value;
-            double pageHeight = page.Height.Value;
-            double linesForPage = (pageHeight - marginBottom - marginTop) / rowHeight;
-            double rectangleWidth = (pageWidth - marginLeft - marginRight) / 2;
-            double currentHeight = marginTop;
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Verdena", fontSize, XFontStyle.Regular);
-            XFont boldFont = new XFont("Verdena", fontSize, XFontStyle.Bold);
-            gfx.DrawString(
-                "Test data for: ",
-                boldFont,
-                XBrushes.Black,
-                new XRect(0, currentHeight, pageWidth, fontSize),
-                XStringFormats.Center);
-            currentHeight += fontSize;
-            gfx.DrawString(
-                $"{ip.IPAddress} {ip.Hostname}",
-                boldFont, 
-                XBrushes.Black, 
-                new XRect(0, currentHeight, pageWidth, fontSize), 
-                XStringFormats.Center);
-            currentHeight += fontSize;
-            gfx.DrawString(
-                $"Between {startTime.ToShortDateString()}-{endTime.ToShortDateString()}",
-                boldFont,
-                XBrushes.Black,
-                new XRect(0, currentHeight, pageWidth, fontSize),
-                XStringFormats.Center);
-            currentHeight += fontSize;
-            for (int i = 1; i <= records; i++)
+            CurrentPage = Document.AddPage();
+            PageWidth = CurrentPage.Width.Value;
+            PageHeight = CurrentPage.Height.Value;
+            RectangleWidth = (PageWidth - MarginLeft - MarginRight) / 3;
+            CurrentHeight = MarginTop;
+            gfx = XGraphics.FromPdfPage(CurrentPage);
+            Font = new XFont("Arial", FontSize, XFontStyle.Regular);
+            SmallerFont = new XFont("Arial", SmallerFontSize, XFontStyle.Regular);
+            BoldFont = new XFont("Arial", FontSize, XFontStyle.Bold);
+            GenerateTopOfPage();
+            if(disconnects.Length > 0)
             {
-                gfx.DrawRectangle(new XPen(XBrushes.Black), 
-                    XBrushes.White, 
-                    new XRect(marginLeft, currentHeight, rectangleWidth, rowHeight));
-                gfx.DrawRectangle(new XPen(XBrushes.Black), 
-                    XBrushes.White, 
-                    new XRect(marginLeft + rectangleWidth, currentHeight, rectangleWidth, rowHeight));
-                gfx.DrawString(
-                    pingDatas[i-1].Date.ToShortTimeString(),
-                    font,
-                    XBrushes.Black,
-                    new XRect(marginLeft, currentHeight, rectangleWidth, rowHeight),
-                    XStringFormats.Center);
-                gfx.DrawString(
-                    pingDatas[i-1].Ping.ToString(),
-                    font,
-                    XBrushes.Black,
-                    new XRect(marginLeft + rectangleWidth, currentHeight, rectangleWidth, rowHeight),
-                    XStringFormats.Center);
-                currentHeight += rowHeight;
-                if (i % linesForPage == 0)
+                GenerateDisconnectTableHeader();
+                foreach (Disconnect dc in disconnects)
                 {
-                    page = document.AddPage();
-                    gfx = XGraphics.FromPdfPage(page);
-                    pageWidth = page.Width.Value;
-                    pageHeight = page.Height.Value;
-                    linesForPage = pageHeight - marginBottom - marginTop;
-                    rectangleWidth = (pageWidth - marginLeft - marginRight) / 2;
-                    currentHeight = marginTop;
+                    GenerateDisconnectTableRow(dc);
+                }
+                CurrentHeight += 20;
+            }
+            if(pingDatas.Length > 0)
+            {
+                GenerateTableHeader();
+                foreach (PingDataModel pdm in pingDatas)
+                {
+                    GenerateTableRow(pdm);
                 }
             }
-            document.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet", "pdf_test.pdf"));
+            string filename = $"{testCase.DestinationHost.Hostname} " +
+                $"{testCase.testStarted.ToString("dd-MM-yyyy HH-mm-ss")}-" +
+                $"{testCase.testEnded.ToString("dd-MM-yyyy HH-mm-ss")}.pdf";
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet", "pdfs");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            Document.Save(Path.Combine(folderPath, filename));
+        }
+
+        private void GenerateNewPage()
+        {
+            CurrentPage = Document.AddPage();
+            gfx = XGraphics.FromPdfPage(CurrentPage);
+            PageWidth = CurrentPage.Width.Value;
+            PageHeight = CurrentPage.Height.Value;
+            RectangleWidth = (PageWidth - MarginLeft - MarginRight) / 3;
+            CurrentHeight = MarginTop;
+            GenerateTopOfPage();
+        }
+
+        private void GenerateDisconnectTableRow(Disconnect dc)
+        {
+            if (CurrentHeight + RowHeight + MarginBottom > PageHeight)
+            {
+                GenerateNewPage();
+                GenerateDisconnectTableHeader();
+            }
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                    XBrushes.White,
+                    new XRect(MarginLeft, CurrentHeight, RectangleWidth + 2 * RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + RectangleWidth + 2 * RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + 2 * RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawString(
+                dc.ConnectedIp.Hostname,
+                SmallerFont,
+                XBrushes.Black,
+                new XRect(MarginLeft, CurrentHeight, RectangleWidth + 2 * RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                $"{dc.DisconnectDate.Date.ToShortDateString()} {dc.DisconnectDate.ToString("HH:mm:ss:fff")}",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + RectangleWidth + 2 * RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                $"{dc.ReconnectDate.Date.ToShortDateString()} {dc.ReconnectDate.ToString("HH:mm:ss:fff")}",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + 2 * RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            CurrentHeight += RowHeight;
+        }
+
+        private void GenerateTableRow(PingDataModel pdm)
+        {
+            if (CurrentHeight + RowHeight + MarginBottom > PageHeight)
+            {
+                GenerateNewPage();
+                GenerateTableHeader();
+            }
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                    XBrushes.White,
+                    new XRect(MarginLeft, CurrentHeight, RectangleWidth + RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + 2 * RectangleWidth, CurrentHeight, RectangleWidth, RowHeight));
+            gfx.DrawString(
+                pdm.Ip.Hostname,
+                SmallerFont,
+                XBrushes.Black,
+                new XRect(MarginLeft, CurrentHeight, RectangleWidth + RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                $"{pdm.Date.ToShortDateString()} {pdm.Date.ToString("HH:mm:ss:fff")}",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                pdm.Ping.ToString(),
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + 2 * RectangleWidth, CurrentHeight, RectangleWidth, RowHeight),
+                XStringFormats.Center);
+            CurrentHeight += RowHeight;
+        }
+
+        private void GenerateTopOfPage()
+        {
+            gfx.DrawString(
+                "Test data for: ",
+                Font,
+                XBrushes.Black,
+                new XRect(0, CurrentHeight, PageWidth, FontSize),
+                XStringFormats.Center);
+            CurrentHeight += FontSize;
+            gfx.DrawString(
+                $"{TestCase.DestinationHost.IPAddress} {TestCase.DestinationHost.Hostname}",
+                Font,
+                XBrushes.Black,
+                new XRect(0, CurrentHeight, PageWidth, FontSize),
+                XStringFormats.Center);
+            CurrentHeight += FontSize;
+            gfx.DrawString(
+                $"Between {TestCase.testStarted.ToString("dd.MM.yyyy HH:mm:ss")} - {TestCase.testEnded.ToString("dd.MM.yyyy HH:mm:ss")}",
+                Font,
+                XBrushes.Black,
+                new XRect(0, CurrentHeight, PageWidth, FontSize),
+                XStringFormats.Center);
+            CurrentHeight += FontSize + MarginTop;
+        }
+
+        private void GenerateTableHeader()
+        {          
+            if(CurrentHeight + RowHeight > PageHeight)
+            {
+                GenerateNewPage();
+            }
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                    XBrushes.White,
+                    new XRect(MarginLeft, CurrentHeight, RectangleWidth + RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + 2 * RectangleWidth, CurrentHeight, RectangleWidth, RowHeight));
+            gfx.DrawString(
+                "Hostname",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft, CurrentHeight, RectangleWidth + RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                "Time",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                "Ping",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + 2 * RectangleWidth, CurrentHeight, RectangleWidth, RowHeight),
+                XStringFormats.Center);
+            CurrentHeight += RowHeight;
+        }
+
+        private void GenerateDisconnectTableHeader()
+        {
+            if (CurrentHeight + RowHeight > PageHeight)
+            {
+                GenerateNewPage();
+            }
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft, CurrentHeight, RectangleWidth + 2 * RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + RectangleWidth + 2 * RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawRectangle(new XPen(XBrushes.Black),
+                XBrushes.White,
+                new XRect(MarginLeft + 2 * RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight));
+            gfx.DrawString(
+                "Hostname",
+                SmallerFont,
+                XBrushes.Black,
+                new XRect(MarginLeft, CurrentHeight, RectangleWidth + 2 * RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                "Disconnect Date",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + RectangleWidth + 2 * RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            gfx.DrawString(
+                "Reconnect Date",
+                Font,
+                XBrushes.Black,
+                new XRect(MarginLeft + 2 * RectangleWidth + RectangleDifference, CurrentHeight, RectangleWidth - RectangleDifference, RowHeight),
+                XStringFormats.Center);
+            CurrentHeight += RowHeight;
         }
     }
 }

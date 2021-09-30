@@ -13,6 +13,7 @@ namespace PNetDll.Sqlite.Models
         [ForeignKey("DestinationHostId")]
         public Ip DestinationHost { get; set; }        
         public List<Ip> Ips { get; } = new List<Ip>();
+        public List<Disconnect> Disconnects { get; } = new List<Disconnect>();
         public DateTime testStarted { get; set; }
         public DateTime testEnded { get; set; }      
     }

@@ -146,7 +146,7 @@ namespace PNetDll
         public IPAddress IpAddress { get; set; }
 
         /// <summary>
-        /// 
+        /// Database ip model for this test
         /// </summary>
         public Ip Ip { get; }
 

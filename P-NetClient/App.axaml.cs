@@ -40,7 +40,13 @@ namespace PNetClient
 
             try
             {
-                new Pdf.PdfGenerator().GeneratePdf(DateTime.Today, DateTime.Today.AddDays(1), Database.Db.Ips.Where((ip) => ip.IpId == 2).FirstOrDefault());
+                new Pdf.PdfGenerator().GeneratePdf(
+                    Database.Db.TestCases
+                    .Include(tc => tc.DestinationHost)
+                    .Include(tc => tc.Ips)
+                    .OrderBy(tc => tc.TestCaseId)
+                    .Last()
+                    );
             }
             catch(Pdf.PdfGenerationException e)
             {
