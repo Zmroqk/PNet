@@ -12,6 +12,7 @@ namespace PNetDll.Sqlite.Models
         public uint PingDataModelId { get; set; }
         public DateTime Date { get; set; }
         public Ip Ip { get; set; }
+        public TestCase TestCase { get; set; }
         public int Ping { get; set; }
         public bool Success { get; set; }
     }

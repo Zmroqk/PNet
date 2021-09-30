@@ -2,9 +2,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
+using Microsoft.EntityFrameworkCore;
 using PNetDll;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace PNetClient
@@ -33,6 +35,17 @@ namespace PNetClient
             this.Resources.Add("TestsIcon", new Bitmap(path + "TracerouteIcon.png"));
             this.Resources.Add("ServiceIcon", new Bitmap(path + "ServerIcon.png"));
             this.Resources.Add("TracerouteIcon", new Bitmap(path + "TracerouteIcon.ico"));
+
+            Database.Db.Database.EnsureCreated();
+
+            try
+            {
+                new Pdf.PdfGenerator().GeneratePdf(DateTime.Today, DateTime.Today.AddDays(1), Database.Db.Ips.Where((ip) => ip.IpId == 2).FirstOrDefault());
+            }
+            catch(Pdf.PdfGenerationException e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

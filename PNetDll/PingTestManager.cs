@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using PNetDll.Sqlite.Models;
 
 namespace PNetDll
 {
@@ -122,6 +123,11 @@ namespace PNetDll
         }
 
         /// <summary>
+        /// Database test case model for this test
+        /// </summary>
+        TestCase TestCase { get; set; }
+
+        /// <summary>
         /// Create ping tests manager
         /// </summary>
         /// <param name="destinationHost">Host to which connection shoudl be tested</param>
@@ -233,13 +239,12 @@ namespace PNetDll
                         return null;
                     }
                     catch (Exception e) {
-                        Console.Error.Write(e.Message);
                         return null; 
                     }                  
                 }));
             }
             Task<PingTest>[] pingsTasks = pings.ToArray();
-            Task.WaitAll(pingsTasks);          
+            Task.WaitAll(pingsTasks);           
             foreach(Task<PingTest> pt in pingsTasks)
             {
                 if (pt.Result != null)
@@ -247,9 +252,28 @@ namespace PNetDll
                     pt.Result.PingCompleted += PingCompleted;
                     PingTests.Add(pt.Result);
                     availablePings.Add(pt.Result);
-                    CreateHistory(pt.Result);
+                    CreateHistory(pt.Result);                   
                 }              
             }
+            using (PingContext db = Database.Db)
+            {
+                List<Ip> ips = new List<Ip>();
+                foreach(IPAddress iPAddress in IPs)
+                {
+                    Ip ip = db.Ips.Where((ip) => ip.IPAddress == iPAddress.ToString()).FirstOrDefault();
+                    ips.Add(ip);
+                    db.Ips.Attach(ip);
+                }
+                TestCase = new TestCase()
+                {
+                    DestinationHost = db.Ips.Where((ip) => ip.IPAddress == DestinationHost.ToString()).FirstOrDefault(),
+                    testStarted = DateTime.Now
+                };
+                TestCase.Ips.AddRange(ips);
+                db.TestCases.Add(TestCase);
+                db.SaveChanges();
+            }
+
         }
 
         /// <summary>
@@ -378,6 +402,12 @@ namespace PNetDll
         {
             pingTimer?.Dispose();
             blockedPingsTimer?.Dispose();
+            using(PingContext db = Database.Db)
+            {
+                db.TestCases.Attach(TestCase);
+                TestCase.testEnded = DateTime.Now;
+                db.SaveChanges();
+            }
         }
     }
 }

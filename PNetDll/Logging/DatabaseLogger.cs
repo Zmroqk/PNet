@@ -55,7 +55,7 @@ namespace PNetDll.Logging
                         PingDataModel pData = new PingDataModel()
                         {
                             Date = data.DateTime,
-                            Ip = db.Ips.Where(ip => ip.IpId ==  data.Ip.IpId).FirstOrDefault(),
+                            Ip = db.Ips.Where(ip => ip.IpId == data.Ip.IpId).FirstOrDefault(),
                             Ping = (int)data.Ping,
                             Success = data.Success
                         };

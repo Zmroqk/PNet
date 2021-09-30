@@ -43,6 +43,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.5" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.5" />
     <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+    <PackageReference Include="PdfSharpCore" Version="1.3.6" />
    </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PNetDll\PNetDll.csproj" />

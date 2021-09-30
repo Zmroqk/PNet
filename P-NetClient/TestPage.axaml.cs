@@ -65,6 +65,10 @@ namespace PNetClient
                 PingTest pt = Manager.PingTests.Find((pt) => pt.IpAddress.MapToIPv4().Equals(Manager.DestinationHost.MapToIPv4()));               
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
+                    if(pt == null)
+                    {
+                        throw new System.Exception("Test failed to start");
+                    }
                     Manager.History[pt].CollectionChanged += TestPage_CollectionChanged;
                     ListBox.Items = Manager.PingTests;
                     TestInitializationCompleted = true;

@@ -209,7 +209,8 @@ namespace PNetDll
             if(Ip == null)
             {
                 Ip = new Ip() { IPAddress = IpAddress.ToString() };
-                Db.SaveChangesAsync();
+                Db.Ips.Add(Ip);
+                Db.SaveChanges();
             }              
         }
 
