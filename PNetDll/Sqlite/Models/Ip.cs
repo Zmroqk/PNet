@@ -11,5 +11,6 @@ namespace PNetDll.Sqlite.Models
         public string IPAddress { get; set; }
         public string Hostname { get; set; }
         public List<TestCase> TestCases { get; } = new List<TestCase>();
+        public List<TestSnapshot> TestSnapshots { get; } = new List<TestSnapshot>();
     }
 }

@@ -31,6 +31,10 @@ namespace PNetDll
         /// </summary>
         Timer pingTimer;
         /// <summary>
+        /// Timer for test manager snapshot
+        /// </summary>
+        Timer snapshotTimer;
+        /// <summary>
         /// Available tests to ping
         /// </summary>
         List<PingTest> availablePings;
@@ -194,6 +198,38 @@ namespace PNetDll
             else if (Mode == PingMode.Asynchronously)
                 pingTimer.Elapsed += PingAsynchronously;
             pingTimer.Start();
+
+            snapshotTimer = new Timer();
+            snapshotTimer.Interval = 5 * 60 * 1000;
+            snapshotTimer.Elapsed += SnapshotTimer_Elapsed;
+            snapshotTimer.Start();
+        }
+
+        private void SnapshotTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            DateTime dateTime = DateTime.Now;         
+            foreach (PingTest pt in PingTests)
+            {
+                using (PingContext db = Database.Db)
+                {
+                    Ip ip = new Ip { IpId = pt.Ip.IpId };
+                    TestCase testCase = new TestCase { TestCaseId = TestCase.TestCaseId };
+                    db.Ips.Attach(ip);
+                    db.TestCases.Attach(testCase);
+                    TestSnapshot tcs = new TestSnapshot()
+                    {
+                        Ip = ip,
+                        AveragePing = pt.AveragePing,
+                        MaxPing = pt.MaxPing,
+                        PacketsSend = pt.PacketsSend,
+                        PacketsReceived = pt.PacketsReceived,
+                        TestCase = testCase,
+                        SnapshotTaken = dateTime
+                    };
+                    db.Snapshots.Add(tcs);
+                    db.SaveChanges();
+                }
+            }
         }
 
         /// <summary>
@@ -427,6 +463,7 @@ namespace PNetDll
         {
             pingTimer?.Dispose();
             blockedPingsTimer?.Dispose();
+            snapshotTimer?.Dispose();
             using(PingContext db = Database.Db)
             {
                 db.TestCases.Attach(TestCase);

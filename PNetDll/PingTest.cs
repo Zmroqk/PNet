@@ -188,8 +188,6 @@ namespace PNetDll
         /// </summary>
         int lastIndex;
 
-        PingContext Db;
-
         /// <summary>
         /// Create instance of test
         /// </summary>
@@ -204,14 +202,16 @@ namespace PNetDll
             hostnameResolved = false;
             index = 0;
             lastIndex = 0;
-            Db = Database.Db;
-            Ip = Db.Ips.Where(ip => ip.IPAddress == IpAddress.ToString()).FirstOrDefault();
-            if(Ip == null)
+            using(PingContext db = Database.Db)
             {
-                Ip = new Ip() { IPAddress = IpAddress.ToString() };
-                Db.Ips.Add(Ip);
-                Db.SaveChanges();
-            }              
+                Ip = db.Ips.Where(ip => ip.IPAddress == IpAddress.ToString()).FirstOrDefault();
+                if (Ip == null)
+                {
+                    Ip = new Ip() { IPAddress = IpAddress.ToString() };
+                    db.Ips.Add(Ip);
+                    db.SaveChanges();
+                }
+            }           
         }
 
         /// <summary>
@@ -234,8 +234,12 @@ namespace PNetDll
                         Hostname = IpAddress.ToString();
                     }
                     hostnameResolved = true;
-                    Ip.Hostname = Hostname;
-                    Db.SaveChanges();
+                    using(PingContext db = Database.Db)
+                    {
+                        db.Ips.Attach(Ip);
+                        Ip.Hostname = Hostname;
+                        db.SaveChanges();
+                    }                   
                 });              
             }
             Ping ping = new Ping();

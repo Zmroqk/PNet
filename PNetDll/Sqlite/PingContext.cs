@@ -12,6 +12,7 @@ namespace PNetDll.Sqlite
         public DbSet<Ip> Ips { get; set; }
         public DbSet<PingDataModel> PingsData { get; set; }
         public DbSet<TestCase> TestCases { get; set; }
+        public DbSet<TestSnapshot> Snapshots { get; set; }
 
         public string DbPath { get; private set; }
 
@@ -23,7 +24,7 @@ namespace PNetDll.Sqlite
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlite($"Data Source={DbPath}");            
+            options.UseSqlite($"Data Source={DbPath}").EnableSensitiveDataLogging();            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
