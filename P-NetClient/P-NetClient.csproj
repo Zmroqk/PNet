@@ -6,7 +6,7 @@
     <RootNamespace>PNetClient</RootNamespace>
     <AssemblyName>PNetClient</AssemblyName>
     <ApplicationIcon>Images\TracerouteIcon.ico</ApplicationIcon>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
