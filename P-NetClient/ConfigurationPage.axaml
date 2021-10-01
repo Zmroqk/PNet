@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dll="using:PNetDll"
+             xmlns:enums="using:PNetClient.Enums"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
              x:Class="PNetClient.ConfigurationPage">
   <StackPanel>
@@ -11,7 +12,7 @@
            Margin="10"
            FontSize="20"
            FontWeight="Bold"/>
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="150"/>
         <ColumnDefinition/>
@@ -72,32 +73,42 @@
              Margin="5"/>
       <StackPanel Grid.Column="1" 
                   Grid.Row="4" 
-                  Orientation="Horizontal" 
+                  Orientation="Horizontal"
+                  HorizontalAlignment="Center"
                   Spacing="10">
         <RadioButton GroupName="PingMode" 
                      Content="Simultaneous"
-                     IsChecked="{Binding Path=PingMode, Converter={StaticResource pingModeConverter}, ConverterParameter={x:Static dll:PingMode.Simultaneous}}"/>
+                     IsChecked="{Binding Path=PingMode, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static dll:PingMode.Simultaneous}}"/>
         <RadioButton GroupName="PingMode"
                      Content="Asynchronously"
-                     IsChecked="{Binding Path=PingMode, Converter={StaticResource pingModeConverter}, ConverterParameter={x:Static dll:PingMode.Asynchronously}}"/>
+                     IsChecked="{Binding Path=PingMode, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static dll:PingMode.Asynchronously}}"/>
       </StackPanel>
-      <!-- Use Traceroute -->
+      <!-- Use File Save -->
       <Label Grid.Column="0"
              Grid.Row="5"
-             Content="Use Traceroute: "
+             Content="Use file logging: "
              HorizontalContentAlignment="Right"
              Margin="5"/>
       <CheckBox Grid.Column="1"
                 Grid.Row="5"
+                IsChecked="{Binding UseFileSave}"/>
+      <!-- Use Traceroute -->
+      <Label Grid.Column="0"
+             Grid.Row="6"
+             Content="Use Traceroute: "
+             HorizontalContentAlignment="Right"
+             Margin="5"/>
+      <CheckBox Grid.Column="1"
+                Grid.Row="6"
                 IsChecked="{Binding UseTraceroute}"/>
       <!-- OutputPath -->
       <Label Grid.Column="0"
-             Grid.Row="6"
+             Grid.Row="7"
              Content="Output path: "
              HorizontalContentAlignment="Right"
              Margin="5"/>
       <StackPanel Grid.Column="1"
-                  Grid.Row="6">
+                  Grid.Row="7">
         <TextBox Text="{Binding OutputPath}"
                  Watermark="Output Path"
                  MaxWidth="200"/>
@@ -105,7 +116,7 @@
 
       <!-- Save -->
       <Button Grid.Column="1"
-              Grid.Row="7"
+              Grid.Row="8"
               Content="Save configuration"
               Margin="20"
               HorizontalContentAlignment="Center"

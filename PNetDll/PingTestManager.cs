@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PNetDll.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using PNetDll.Sqlite.Models;
 
 namespace PNetDll
 {
@@ -29,6 +31,10 @@ namespace PNetDll
         /// </summary>
         Timer pingTimer;
         /// <summary>
+        /// Timer for test manager snapshot
+        /// </summary>
+        Timer snapshotTimer;
+        /// <summary>
         /// Available tests to ping
         /// </summary>
         List<PingTest> availablePings;
@@ -36,6 +42,10 @@ namespace PNetDll
         /// Tests marked as disconnected
         /// </summary>
         List<PingTest> blockedPings;
+        /// <summary>
+        /// Disconnects for tests marked as disconnected
+        /// </summary>
+        Dictionary<PingTest, Disconnect> disconnects;
         /// <summary>
         /// Timer for tests marked as disconnected, used to reconnect tests
         /// </summary>
@@ -121,6 +131,11 @@ namespace PNetDll
         }
 
         /// <summary>
+        /// Database test case model for this test
+        /// </summary>
+        public TestCase TestCase { get; private set; }
+
+        /// <summary>
         /// Create ping tests manager
         /// </summary>
         /// <param name="destinationHost">Host to which connection shoudl be tested</param>
@@ -144,6 +159,7 @@ namespace PNetDll
             PingTests = new List<PingTest>();
             availablePings = new List<PingTest>();
             blockedPings = new List<PingTest>();
+            disconnects = new Dictionary<PingTest, Disconnect>();
             LogHistory = logHistory;
             //StreamData = streamData;
             if (LogHistory)
@@ -182,6 +198,38 @@ namespace PNetDll
             else if (Mode == PingMode.Asynchronously)
                 pingTimer.Elapsed += PingAsynchronously;
             pingTimer.Start();
+
+            snapshotTimer = new Timer();
+            snapshotTimer.Interval = 5 * 60 * 1000;
+            snapshotTimer.Elapsed += SnapshotTimer_Elapsed;
+            snapshotTimer.Start();
+        }
+
+        private void SnapshotTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            DateTime dateTime = DateTime.Now;         
+            foreach (PingTest pt in PingTests)
+            {
+                using (PingContext db = Database.Db)
+                {
+                    Ip ip = new Ip { IpId = pt.Ip.IpId };
+                    TestCase testCase = new TestCase { TestCaseId = TestCase.TestCaseId };
+                    db.Ips.Attach(ip);
+                    db.TestCases.Attach(testCase);
+                    TestSnapshot tcs = new TestSnapshot()
+                    {
+                        Ip = ip,
+                        AveragePing = pt.AveragePing,
+                        MaxPing = pt.MaxPing,
+                        PacketsSend = pt.PacketsSend,
+                        PacketsReceived = pt.PacketsReceived,
+                        TestCase = testCase,
+                        SnapshotTaken = dateTime
+                    };
+                    db.Snapshots.Add(tcs);
+                    db.SaveChanges();
+                }
+            }
         }
 
         /// <summary>
@@ -226,14 +274,18 @@ namespace PNetDll
                         PingReply pr;
                         pr = ping.Send(IPs[actualI], 2000);
                         if (pr.Status == IPStatus.Success)
-                            return new PingTest(pr.Address);
+                        {
+                            return new PingTest(pr.Address);                         
+                        }                        
                         return null;
                     }
-                    catch (Exception e) { return null; }                  
+                    catch (Exception e) {
+                        return null; 
+                    }                  
                 }));
             }
             Task<PingTest>[] pingsTasks = pings.ToArray();
-            Task.WaitAll(pingsTasks);
+            Task.WaitAll(pingsTasks);           
             foreach(Task<PingTest> pt in pingsTasks)
             {
                 if (pt.Result != null)
@@ -241,9 +293,31 @@ namespace PNetDll
                     pt.Result.PingCompleted += PingCompleted;
                     PingTests.Add(pt.Result);
                     availablePings.Add(pt.Result);
-                    CreateHistory(pt.Result);
+                    CreateHistory(pt.Result);                   
                 }              
             }
+            using (PingContext db = Database.Db)
+            {
+                List<Ip> ips = new List<Ip>();
+                foreach(IPAddress iPAddress in IPs)
+                {
+                    Ip ip = db.Ips.Where((ip) => ip.IPAddress == iPAddress.ToString()).FirstOrDefault();
+                    if (ip != null)
+                    {
+                        ips.Add(ip);
+                        db.Ips.Attach(ip);
+                    }
+                }
+                TestCase = new TestCase()
+                {
+                    DestinationHost = db.Ips.Where((ip) => ip.IPAddress == DestinationHost.ToString()).FirstOrDefault(),
+                    TestStarted = DateTime.Now                 
+                };
+                TestCase.Ips.AddRange(ips);
+                db.TestCases.Add(TestCase);
+                db.SaveChanges();
+            }
+
         }
 
         /// <summary>
@@ -251,7 +325,7 @@ namespace PNetDll
         /// </summary>
         /// <param name="sender">Test that called this event</param>
         /// <param name="pingData">Ping data</param>
-        private void PingCompleted(object sender, PingData pingData)
+        private async void PingCompleted(object sender, PingData pingData)
         {
             PingTest pt = (PingTest)sender;
             if (pingData.ErrorCount > ErrorsCount)
@@ -266,13 +340,25 @@ namespace PNetDll
                         pingIndex = pingIndex % availablePings.Count;
                 }              
                 pt.PingCompleted += PingReconnectAttemptCompleted;
-                if(blockedPingsTimer != null)
+                using (PingContext db = Database.Db)
+                {
+                    db.Ips.Attach(pingData.Ip);
+                    db.TestCases.Attach(TestCase);
+                    lock (blockedPings)
+                    {
+                        Disconnect dc = new Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = pingData.Ip, Test = TestCase };
+                        disconnects.Add(pt, dc);
+                        db.Disconnects.Add(dc);
+                    }                                       
+                    db.SaveChanges();
+                }
+                if (blockedPingsTimer != null)
                 {
                     blockedPingsTimer = new Timer();
                     blockedPingsTimer.Interval = ReconnectInterval;
                     blockedPingsTimer.Elapsed += BlockedPingsTimer_Elapsed;
                     blockedPingsTimer.Start();
-                }                
+                }               
             }
             if(pingData.Success)
             {
@@ -318,8 +404,17 @@ namespace PNetDll
             if (pingData.Success)
             {
                 pt.PingCompleted -= PingReconnectAttemptCompleted;
-                lock(blockedPings)
+                lock (blockedPings)
+                {
                     blockedPings.Remove(pt);
+                    using (PingContext db = Database.Db)
+                    {
+                        Disconnect dc = disconnects[pt];
+                        db.Attach(dc);
+                        dc.ReconnectDate = DateTime.Now;
+                        db.SaveChanges();
+                    }                    
+                }                  
                 lock (availablePings)
                 {
                     availablePings.Add(pt);
@@ -368,6 +463,13 @@ namespace PNetDll
         {
             pingTimer?.Dispose();
             blockedPingsTimer?.Dispose();
+            snapshotTimer?.Dispose();
+            using(PingContext db = Database.Db)
+            {
+                db.TestCases.Attach(TestCase);
+                TestCase.TestEnded = DateTime.Now;
+                db.SaveChanges();
+            }
         }
     }
 }

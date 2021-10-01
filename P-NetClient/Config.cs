@@ -1,11 +1,6 @@
 ﻿using PNetDll;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace PNetClient
 {
@@ -40,6 +35,11 @@ namespace PNetClient
         public PingMode PingMode { get; set; } = PingMode.Asynchronously;
 
         /// <summary>
+        /// Save mode used by tests
+        /// </summary>
+        public bool UseFileSave { get; set; } = false;
+
+        /// <summary>
         /// Errors after which tests switches to reconnect mode
         /// </summary>
         public short ErrorsCount { get; set; } = 3;
@@ -59,7 +59,7 @@ namespace PNetClient
         /// </summary>
         public void SaveConfiguration()
         {
-            File.WriteAllText(App.AppExecutablePath + ".config", JsonSerializer.Serialize(this));
+            File.WriteAllText(Path.Combine(App.AppExecutablePath, ".config"), JsonSerializer.Serialize(this));
             foreach (TestPage tp in MainWindow.TestPages)
             {
                 tp.Manager.Interval = Interval;
@@ -74,12 +74,12 @@ namespace PNetClient
         /// </summary>
         public static void ReadConfiguration()
         {
-            if (File.Exists(App.AppExecutablePath + ".config"))
+            if (File.Exists(Path.Combine(App.AppExecutablePath, ".config")))
             {
-                Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText(App.AppExecutablePath + ".config"));
+                Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText(Path.Combine(App.AppExecutablePath, ".config")));
                 if (config != null)
                     Instance = config;
-            }             
+            }
         }
     }
 }

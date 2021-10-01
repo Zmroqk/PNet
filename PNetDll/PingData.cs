@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PNetDll.Sqlite;
+using PNetDll.Sqlite.Models;
+using System;
 using System.Net;
 using System.Text.Json.Serialization;
 
@@ -51,6 +53,11 @@ namespace PNetDll
         /// Current error count
         /// </summary>
         public ushort ErrorCount { get; init; }
+
+        /// <summary>
+        /// Ip database model connected with this ping
+        /// </summary>
+        public Ip Ip { get; init; }
 
         public override string ToString()
         {

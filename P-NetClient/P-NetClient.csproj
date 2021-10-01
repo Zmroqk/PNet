@@ -6,8 +6,13 @@
     <RootNamespace>PNetClient</RootNamespace>
     <AssemblyName>PNetClient</AssemblyName>
     <ApplicationIcon>Images\TracerouteIcon.ico</ApplicationIcon>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="Pages\PdfGenerationPage.axaml" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="Images\ServerIcon.png" />
     <None Remove="Images\TracerouteIcon.ico" />
@@ -39,10 +44,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Pages\PdfGenerationPage.axaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.5" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.5" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.5" />
     <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+    <PackageReference Include="PdfSharpCore" Version="1.3.6" />
    </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PNetDll\PNetDll.csproj" />
@@ -50,5 +61,8 @@
   <ItemGroup>
     <Resource Include="Plusik.png" />
     <Resource Include="Plusik.xcf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
   </ItemGroup>
 </Project>

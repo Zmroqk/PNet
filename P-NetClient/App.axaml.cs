@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using PNetDll;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace PNetClient
@@ -33,6 +32,9 @@ namespace PNetClient
             this.Resources.Add("TestsIcon", new Bitmap(path + "TracerouteIcon.png"));
             this.Resources.Add("ServiceIcon", new Bitmap(path + "ServerIcon.png"));
             this.Resources.Add("TracerouteIcon", new Bitmap(path + "TracerouteIcon.ico"));
+
+            Database.Db.Database.EnsureCreated();
+
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

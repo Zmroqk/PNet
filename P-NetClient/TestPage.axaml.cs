@@ -9,13 +9,14 @@ using PNetDll;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using PNetDll.Logging;
 
 namespace PNetClient
 {
     public partial class TestPage : UserControl
     {
         public PingTestManager Manager { get; set; }
-        public Logger Logger { get; set; }
+        public List<Logger> Loggers { get; set; }
         ListBox ListBox { get; set; }
         Plot PingPlot { get; set; }
         public Button CallerButton { get; set; }
@@ -57,10 +58,17 @@ namespace PNetClient
             TestName = Manager.DestinationHost.ToString();
             Task.Run(() => {
                 Manager.StartTest();
-                Logger.StartLogging();
+                foreach (Logger logger in Loggers)
+                {
+                    logger.StartAutomaticLogging();
+                }
                 PingTest pt = Manager.PingTests.Find((pt) => pt.IpAddress.MapToIPv4().Equals(Manager.DestinationHost.MapToIPv4()));               
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
+                    if(pt == null)
+                    {
+                        throw new System.Exception("Test failed to start");
+                    }
                     Manager.History[pt].CollectionChanged += TestPage_CollectionChanged;
                     ListBox.Items = Manager.PingTests;
                     TestInitializationCompleted = true;
@@ -93,7 +101,10 @@ namespace PNetClient
             PingTest pt = Manager.PingTests.Find((pt) => pt.IpAddress.MapToIPv4().Equals(Manager.DestinationHost.MapToIPv4()));
             if(TestInitializationCompleted)
                 Manager.History[pt].CollectionChanged -= TestPage_CollectionChanged;
-            Logger.Dispose();
+            foreach(Logger logger in Loggers)
+            {
+                logger.Dispose();
+            }
             Manager.Dispose();
             MainWindow.TestPages.Remove(this);
             MainWindow.Instance.CurrentView = new AddTestPage();

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PNetClient
 {
@@ -18,6 +19,15 @@ namespace PNetClient
         public IControl CurrentView { 
             get { return GetValue(CurrentViewProperty); } 
             set { SetValue(CurrentViewProperty, value); }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            foreach(TestPage testPage in TestPages)
+            {
+                testPage.Manager.Dispose();
+            }
+            base.OnClosing(e);
         }
 
         public MainWindow()

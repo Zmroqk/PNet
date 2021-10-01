@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
+using PNetClient.Pages;
 
 namespace PNetClient
 {
@@ -37,6 +38,12 @@ namespace PNetClient
         {
             if (Parent != null)
                 MainWindow.Instance.CurrentView = new ServicePage();
+        }
+
+        public void ButtonPdfClick(object sender, RoutedEventArgs e)
+        {
+            if (Parent != null)
+                MainWindow.Instance.CurrentView = new PdfGenerationPage();
         }
     }
 }

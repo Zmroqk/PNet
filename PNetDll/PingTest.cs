@@ -7,6 +7,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Net.Sockets;
+using PNetDll.Sqlite.Models;
+using System.Linq;
+using PNetDll.Sqlite;
 
 namespace PNetDll
 {
@@ -142,6 +145,11 @@ namespace PNetDll
         /// </summary>
         public IPAddress IpAddress { get; set; }
 
+        /// <summary>
+        /// Database ip model for this test
+        /// </summary>
+        public Ip Ip { get; }
+
         long _ActualPing;
         long _AveragePing;
         long _MaxPing;
@@ -194,6 +202,16 @@ namespace PNetDll
             hostnameResolved = false;
             index = 0;
             lastIndex = 0;
+            using(PingContext db = Database.Db)
+            {
+                Ip = db.Ips.Where(ip => ip.IPAddress == IpAddress.ToString()).FirstOrDefault();
+                if (Ip == null)
+                {
+                    Ip = new Ip() { IPAddress = IpAddress.ToString() };
+                    db.Ips.Add(Ip);
+                    db.SaveChanges();
+                }
+            }           
         }
 
         /// <summary>
@@ -216,6 +234,12 @@ namespace PNetDll
                         Hostname = IpAddress.ToString();
                     }
                     hostnameResolved = true;
+                    using(PingContext db = Database.Db)
+                    {
+                        db.Ips.Attach(Ip);
+                        Ip.Hostname = Hostname;
+                        db.SaveChanges();
+                    }                   
                 });              
             }
             Ping ping = new Ping();
@@ -281,7 +305,8 @@ namespace PNetDll
                 Index = currentIndex,
                 Ping = pingReply.RoundtripTime,
                 Success = pingReply.Status == IPStatus.Success,
-                ErrorCount = connectionErrors
+                ErrorCount = connectionErrors,
+                Ip = Ip
             };
             PingCompleted?.Invoke(this, pingData);
         }
