@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using PNetDll;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace PNetClient
@@ -33,6 +34,11 @@ namespace PNetClient
             this.Resources.Add("ServiceIcon", new Bitmap(path + "ServerIcon.png"));
             this.Resources.Add("TracerouteIcon", new Bitmap(path + "TracerouteIcon.ico"));
 
+            string folderPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
             Database.Db.Database.EnsureCreated();
 
 

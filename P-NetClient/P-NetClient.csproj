@@ -6,9 +6,9 @@
     <RootNamespace>PNetClient</RootNamespace>
     <AssemblyName>PNetClient</AssemblyName>
     <ApplicationIcon>Images\TracerouteIcon.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0.1</Version>
+    <AssemblyVersion>1.1.0.1</AssemblyVersion>
+    <FileVersion>1.1.0.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaXaml Remove="Pages\PdfGenerationPage.axaml" />
