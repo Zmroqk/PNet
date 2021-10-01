@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="506"
+             x:Class="PNetClient.Pages.PdfGenerationPage">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Label HorizontalContentAlignment="Center"
+           FontSize="20"
+           Margin="10"
+           FontWeight="Bold">
+        Generate PDF
+      </Label>
+      <ScrollViewer Height="475" Width="900">
+        <ListBox Items="{Binding LoggedTests}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border BorderBrush="Black"
+                      BorderThickness="2"
+                      CornerRadius="3"
+                      Padding="4">
+                <Grid Width="900" RowDefinitions="Auto" ColumnDefinitions="380,*,*,*">
+                  <TextBlock Text="{Binding DestinationHost.Hostname}" Grid.Column="0" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <TextBlock Text="{Binding TestStarted}" Grid.Column="1" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <TextBlock Text="{Binding TestEnded}" Grid.Column="2" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <Button Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl} Path=DataContext.GeneratePdf}" CommandParameter="{Binding .}" Grid.Column="3" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center">Generate Pdf</Button>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+      <Button Command="{Binding LoadMoreData}" IsVisible="{Binding PossibleToLoadMore}" HorizontalAlignment="Center" VerticalAlignment="Center">Load more data...</Button>
+    </StackPanel>
+</UserControl>

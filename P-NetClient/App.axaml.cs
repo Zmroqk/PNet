@@ -2,11 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using Microsoft.EntityFrameworkCore;
 using PNetDll;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace PNetClient
@@ -38,20 +35,6 @@ namespace PNetClient
 
             Database.Db.Database.EnsureCreated();
 
-            try
-            {
-                new Pdf.PdfGenerator().GeneratePdf(
-                    Database.Db.TestCases
-                    .Include(tc => tc.DestinationHost)
-                    .Include(tc => tc.Ips)
-                    .OrderBy(tc => tc.TestCaseId)
-                    .Last()
-                    );
-            }
-            catch(Pdf.PdfGenerationException e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

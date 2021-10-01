@@ -311,7 +311,7 @@ namespace PNetDll
                 TestCase = new TestCase()
                 {
                     DestinationHost = db.Ips.Where((ip) => ip.IPAddress == DestinationHost.ToString()).FirstOrDefault(),
-                    testStarted = DateTime.Now                 
+                    TestStarted = DateTime.Now                 
                 };
                 TestCase.Ips.AddRange(ips);
                 db.TestCases.Add(TestCase);
@@ -467,7 +467,7 @@ namespace PNetDll
             using(PingContext db = Database.Db)
             {
                 db.TestCases.Attach(TestCase);
-                TestCase.testEnded = DateTime.Now;
+                TestCase.TestEnded = DateTime.Now;
                 db.SaveChanges();
             }
         }

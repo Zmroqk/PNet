@@ -17,7 +17,7 @@ namespace PNetDll.Sqlite.Models
         public List<Ip> Ips { get; } = new List<Ip>();
         public List<Disconnect> Disconnects { get; } = new List<Disconnect>();
         public List<TestSnapshot> Snapshots { get; } = new List<TestSnapshot>();
-        public DateTime testStarted { get; set; }
-        public DateTime testEnded { get; set; }      
+        public DateTime TestStarted { get; set; }
+        public DateTime TestEnded { get; set; }      
     }
 }

@@ -109,12 +109,12 @@ namespace PNetClient.Pdf
                     gfx.DrawRectangle(
                         new XPen(XBrushes.Black),
                         XBrushes.White,
-                        new XRect(MarginLeft, CurrentHeight, PageWidth, RowHeight));
+                        new XRect(MarginLeft, CurrentHeight, PageWidth - MarginLeft - MarginRight, RowHeight));
                     gfx.DrawString(
-                        snapshotDate.Key.ToString("yyyy-MM-dd HH-mm-ss"),
+                        snapshotDate.Key.ToString("yyyy-MM-dd HH:mm:ss"),
                         BoldFont,
                         XBrushes.Black,
-                        new XRect(MarginLeft, CurrentHeight, PageWidth, RowHeight),
+                        new XRect(MarginLeft, CurrentHeight, PageWidth - MarginLeft - MarginRight, RowHeight),
                         XStringFormats.Center);
                     CurrentHeight += RowHeight;
                     foreach (TestSnapshot snapshot in snapshotDate)
@@ -124,8 +124,8 @@ namespace PNetClient.Pdf
                 }
             }
             string filename = $"{testCase.DestinationHost.Hostname} " +
-            $"{testCase.testStarted.ToString("dd-MM-yyyy HH-mm-ss")}-" +
-            $"{testCase.testEnded.ToString("dd-MM-yyyy HH-mm-ss")}.pdf";
+            $"{testCase.TestStarted.ToString("dd-MM-yyyy HH-mm-ss")}-" +
+            $"{testCase.TestEnded.ToString("dd-MM-yyyy HH-mm-ss")}.pdf";
             string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PNet", "pdfs");
             if (!Directory.Exists(folderPath))
             {
@@ -301,7 +301,7 @@ namespace PNetClient.Pdf
                 XStringFormats.Center);
             CurrentHeight += FontSize;
             gfx.DrawString(
-                $"Between {TestCase.testStarted.ToString("dd.MM.yyyy HH:mm:ss")} - {TestCase.testEnded.ToString("dd.MM.yyyy HH:mm:ss")}",
+                $"Between {TestCase.TestStarted.ToString("dd.MM.yyyy HH:mm:ss")} - {TestCase.TestEnded.ToString("dd.MM.yyyy HH:mm:ss")}",
                 BoldFont,
                 XBrushes.Black,
                 new XRect(0, CurrentHeight, PageWidth, FontSize),
@@ -311,7 +311,7 @@ namespace PNetClient.Pdf
 
         private void GenerateTableHeader()
         {          
-            if(CurrentHeight + RowHeight + BigFontSize > PageHeight)
+            if(CurrentHeight + RowHeight + BigFontSize + MarginBottom > PageHeight)
             {
                 GenerateNewPage();
             }
@@ -321,7 +321,7 @@ namespace PNetClient.Pdf
                 XBrushes.Black,
                 new XRect(MarginLeft, CurrentHeight, PageWidth, RowHeight),
                 XStringFormats.CenterLeft);
-            CurrentHeight += BigFontSize;
+            CurrentHeight += BigFontSize + MarginBottom;
             gfx.DrawRectangle(new XPen(XBrushes.Black),
                     XBrushes.White,
                     new XRect(MarginLeft, CurrentHeight, RectangleWidth + RectangleDifference, RowHeight));
@@ -354,7 +354,7 @@ namespace PNetClient.Pdf
 
         private void GenerateDisconnectTableHeader()
         {
-            if (CurrentHeight + RowHeight + BigFontSize> PageHeight)
+            if (CurrentHeight + RowHeight + BigFontSize + MarginBottom > PageHeight)
             {
                 GenerateNewPage();
             }          
@@ -364,7 +364,7 @@ namespace PNetClient.Pdf
                 XBrushes.Black,
                 new XRect(MarginLeft, CurrentHeight, PageWidth, RowHeight),
                 XStringFormats.CenterLeft);
-            CurrentHeight += BigFontSize;
+            CurrentHeight += BigFontSize + MarginBottom;
             gfx.DrawRectangle(new XPen(XBrushes.Black),
                 XBrushes.White,
                 new XRect(MarginLeft, CurrentHeight, RectangleWidth + 2 * RectangleDifference, RowHeight));
@@ -397,7 +397,7 @@ namespace PNetClient.Pdf
 
         private void GenerateSnapshotTableHeader()
         {
-            if (CurrentHeight + RowHeight + BigFontSize > PageHeight)
+            if (CurrentHeight + RowHeight + BigFontSize + MarginBottom > PageHeight)
             {
                 GenerateNewPage();
             }
@@ -408,7 +408,7 @@ namespace PNetClient.Pdf
                 XBrushes.Black,
                 new XRect(MarginLeft, CurrentHeight, PageWidth, RowHeight),
                 XStringFormats.CenterLeft);
-            CurrentHeight += BigFontSize;
+            CurrentHeight += BigFontSize + MarginBottom;
             gfx.DrawRectangle(new XPen(XBrushes.Black),
                 XBrushes.White,
                 new XRect(MarginLeft, CurrentHeight, rectangleWidth + 5 * RectangleDifference, RowHeight));

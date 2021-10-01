@@ -40,6 +40,16 @@
                    Text="Service"
                    />
     </Button>
-
+    <Button DockPanel.Dock="Top"
+                Width="190"
+                Background="Transparent"
+                Click="ButtonPdfClick"
+                Padding="0"
+                Margin="0,10,0,0">
+      <local:MenuRow FirstImagePath="{StaticResource ServiceIcon}"
+                   UseButton="False"
+                   Text="Generate PDF"
+                   />
+    </Button>
   </DockPanel>
 </UserControl>
