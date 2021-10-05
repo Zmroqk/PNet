@@ -6,6 +6,9 @@ using PNetDll;
 using System;
 using System.IO;
 using System.Reflection;
+using PNetClient.Updater;
+using PNetClient.Updater.Windows;
+using Avalonia.Threading;
 
 namespace PNetClient
 {
@@ -41,11 +44,24 @@ namespace PNetClient
             }
             Database.Db.Database.EnsureCreated();
 
-
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
             }
+
+            Updater.Updater updater = new Updater.Updater();
+            updater.CheckForUpdate().ContinueWith((updateAvailable) =>
+            {
+                if (updateAvailable.Result)
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        UpdateWindow window = new UpdateWindow(updater);
+                        window.ShowDialog(MainWindow.Instance);
+                    });                 
+                }
+            });
+            
             base.OnFrameworkInitializationCompleted();
         }
     }

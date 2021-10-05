@@ -6,9 +6,9 @@
     <RootNamespace>PNetClient</RootNamespace>
     <AssemblyName>PNetClient</AssemblyName>
     <ApplicationIcon>Images\TracerouteIcon.ico</ApplicationIcon>
-    <Version>1.1.0.1</Version>
-    <AssemblyVersion>1.1.0.1</AssemblyVersion>
-    <FileVersion>1.1.0.1</FileVersion>
+    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaXaml Remove="Pages\PdfGenerationPage.axaml" />
@@ -52,6 +52,7 @@
     <PackageReference Include="Avalonia" Version="0.10.5" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.5" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
     <PackageReference Include="PdfSharpCore" Version="1.3.6" />
    </ItemGroup>
@@ -64,5 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Updater\Windows\UpdateWindow.axaml.cs">
+      <DependentUpon>UpdateWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
