@@ -29,7 +29,8 @@
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
-      </ScrollViewer>
+      </ScrollViewer>	
       <Button Command="{Binding LoadMoreData}" IsVisible="{Binding PossibleToLoadMore}" HorizontalAlignment="Center" VerticalAlignment="Center">Load more data...</Button>
+	  <Button Click="ButtonOpenPdfFolder" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">Open PDFprov folder</Button>
     </StackPanel>
 </UserControl>

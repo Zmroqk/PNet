@@ -12,5 +12,15 @@ namespace PNetDll.Sqlite.Models
         public string Hostname { get; set; }
         public List<TestCase> TestCases { get; } = new List<TestCase>();
         public List<TestSnapshot> TestSnapshots { get; } = new List<TestSnapshot>();
+
+        public override bool Equals(object obj)
+        {
+            Ip otherIp = obj as Ip;
+            if(otherIp == null)
+            {
+                return false;
+            }
+            return otherIp.IpId == this.IpId;
+        }
     }
 }

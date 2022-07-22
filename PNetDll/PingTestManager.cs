@@ -340,19 +340,31 @@ namespace PNetDll
                         pingIndex = pingIndex % availablePings.Count;
                 }              
                 pt.PingCompleted += PingReconnectAttemptCompleted;
-                using (PingContext db = Database.Db)
+                lock (blockedPings)
                 {
-                    db.Ips.Attach(pingData.Ip);
-                    db.TestCases.Attach(TestCase);
-                    lock (blockedPings)
+                    using (PingContext db = Database.Db)
                     {
-                        Disconnect dc = new Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = pingData.Ip, Test = TestCase };
+                        Ip connectedIp = pingData.Ip;
+                        db.TestCases.Attach(TestCase);
+                        if (!db.Ips.Contains(TestCase.DestinationHost))
+                        {
+                            db.Ips.Attach(TestCase.DestinationHost);
+                        }
+                        if (!db.Ips.Contains(pingData.Ip))
+                        {
+                            db.Ips.Attach(pingData.Ip);
+                        }
+                        else
+                        {
+                            connectedIp = db.Ips.Find(pingData.Ip.IpId);
+                        }
+                        Disconnect dc = new Disconnect() { DisconnectDate = pingData.DateTime, ConnectedIp = connectedIp, Test = TestCase };
                         disconnects.Add(pt, dc);
-                        db.Disconnects.Add(dc);
-                    }                                       
-                    db.SaveChanges();
+                        db.Disconnects.Add(dc);                                                  
+                        db.SaveChanges();
+                    }
                 }
-                if (blockedPingsTimer != null)
+                if (blockedPingsTimer == null)
                 {
                     blockedPingsTimer = new Timer();
                     blockedPingsTimer.Interval = ReconnectInterval;
