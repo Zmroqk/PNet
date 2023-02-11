@@ -253,62 +253,62 @@ namespace PNetDll
         /// <param name="pr">Task with ping reply data</param>
         void OnPingCompleted(Task<PingReply> pr)
         {
-            PingReply pingReply = pr.Result;
-            int currentIndex = index;
-            if (pingReply.Buffer.Length != 0)
+            PingReply? pingReply = pr.IsCompletedSuccessfully ? pr.Result : null;
+            int currentIndex = this.index;
+            if (pingReply != null && pingReply.Buffer.Length != 0)
                 currentIndex = BitConverter.ToInt32(pingReply.Buffer);
-            if (pingReply.Status == IPStatus.Success)
+            if (pingReply != null && pingReply.Status == IPStatus.Success)
             {
-                PacketsReceived++;
-                connectionErrors = 0;
-                if(lastIndex < currentIndex)
+                this.PacketsReceived++;
+                this.connectionErrors = 0;
+                if(this.lastIndex < currentIndex)
                 {
-                    ActualPing = pingReply.RoundtripTime;
-                    lastIndex = currentIndex;
+                    this.ActualPing = pingReply.RoundtripTime;
+                    this.lastIndex = currentIndex;
                 }           
-                if (pingReply.RoundtripTime > MaxPing)
-                    MaxPing = pingReply.RoundtripTime;
+                if (pingReply.RoundtripTime > this.MaxPing)
+                    this.MaxPing = pingReply.RoundtripTime;
             }
             else
             {
-                if (lastIndex < currentIndex)
+                if (this.lastIndex < currentIndex)
                 {
-                    ActualPing = timeout;
-                    lastIndex = currentIndex;
+                    this.ActualPing = this.timeout;
+                    this.lastIndex = currentIndex;
                 }
-                connectionErrors++;
+                this.connectionErrors++;
             }
-            PacketLoss = Math.Round(100 - (PacketsReceived / (float)PacketsSend) * 100, 3);
-            lock (lastPings)
+            this.PacketLoss = Math.Round(100 - (this.PacketsReceived / (float)this.PacketsSend) * 100, 3);
+            lock (this.lastPings)
             {
-                lastPings.Add(pingReply.RoundtripTime);
-                if(lastPings.Count > 100)
+                this.lastPings.Add(pingReply?.RoundtripTime ?? this.timeout);
+                if(this.lastPings.Count > 100)
                 {
-                    lastPings.RemoveAt(0);
+                    this.lastPings.RemoveAt(0);
                 }
             }
-            if(Monitor.TryEnter(lastPings)){
+            if(Monitor.TryEnter(this.lastPings)){
                 long sum = 0;
-                foreach(long ping in lastPings)
+                foreach(long ping in this.lastPings)
                 {
                     sum += ping;
                 }
-                AveragePing = sum / lastPings.Count;
-                Monitor.Exit(lastPings);
+                this.AveragePing = sum / this.lastPings.Count;
+                Monitor.Exit(this.lastPings);
             }
             PingData pingData = new PingData()
             {
-                DateTime = DateTime.Now.AddMilliseconds(-pingReply.RoundtripTime),
+                DateTime = DateTime.Now.AddMilliseconds(-pingReply?.RoundtripTime ?? -this.timeout),
                 IPAddress = IpAddress,
-                IPAddressString = IpAddress.ToString(),
+                IPAddressString = this.IpAddress.ToString(),
                 Hostname = Hostname,
                 Index = currentIndex,
-                Ping = pingReply.RoundtripTime,
-                Success = pingReply.Status == IPStatus.Success,
+                Ping = pingReply?.RoundtripTime ?? this.timeout,
+                Success = pingReply?.Status == IPStatus.Success,
                 ErrorCount = connectionErrors,
                 Ip = Ip
             };
-            PingCompleted?.Invoke(this, pingData);
+            this.PingCompleted?.Invoke(this, pingData);
         }
 
         /// <summary>
