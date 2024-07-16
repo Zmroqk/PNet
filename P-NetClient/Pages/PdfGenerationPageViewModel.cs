@@ -39,11 +39,10 @@ namespace PNetClient.Pages
             PossibleToLoadMore = false;
         }     
 
-        public void GeneratePdf(TestCase tc)
+        public void GeneratePdf(object tc)
         {
-            FocusManager.Instance.Current.IsVisible = false;
             Pdf.PdfGenerator generator = new Pdf.PdfGenerator();
-            generator.GeneratePdf(tc);
+            generator.GeneratePdf((TestCase)tc);
         }
 
         public void LoadMoreData()

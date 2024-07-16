@@ -9,7 +9,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using System.Linq;
 using OxAxis = OxyPlot.Axes;
-using Avalonia.Input;
+using Avalonia.Visuals;
 
 namespace PNetClient
 {
@@ -73,7 +73,7 @@ namespace PNetClient
                         ls.StrokeThickness = 0.2d;
                         ls.MarkerSize = 3;
                         ls.MarkerType = MarkerType.Circle;
-                        ls.Items = Pings;
+                        ls.ItemsSource = Pings;
                         plot.Series.Add(ls);
                         plot.InvalidatePlot();
                         StackPanel sp = this.Find<StackPanel>("PlotStack");

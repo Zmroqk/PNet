@@ -38,7 +38,7 @@ namespace PNetClient
                 {
                     if (selection.Equals("Unselect"))
                     {
-                        ((DropDown)sender).SelectedItem = null;
+                        ((ComboBox)sender).SelectedItem = null;
                         ViewModel.dropDownSelection = null;
                         return;
                     }                     

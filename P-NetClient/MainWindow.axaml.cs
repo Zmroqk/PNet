@@ -11,17 +11,17 @@ namespace PNetClient
     {
         public static MainWindow? Instance;
 
-        public static readonly StyledProperty<IControl> CurrentViewProperty =
-            AvaloniaProperty.Register<MenuRow, IControl>(nameof(CurrentView));
+        public static readonly StyledProperty<Control> CurrentViewProperty =
+            AvaloniaProperty.Register<MenuRow, Control>(nameof(CurrentView));
 
         public static List<TestPage> TestPages { get; } = new List<TestPage>();
 
-        public IControl CurrentView { 
+        public Control CurrentView { 
             get { return GetValue(CurrentViewProperty); } 
             set { SetValue(CurrentViewProperty, value); }
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override void OnClosing(WindowClosingEventArgs e)
         {
             foreach(TestPage testPage in TestPages)
             {
