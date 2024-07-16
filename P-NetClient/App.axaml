@@ -2,11 +2,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:imaging="clr-namespace:Avalonia.Media.Imaging;assembly=Avalonia.Visuals"
              xmlns:local="clr-namespace:PNetClient.Converters"
-             xmlns:oxy="using:OxyPlot.Avalonia"
+             xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
              x:Class="PNetClient.App">
     <Application.Styles>
-        <FluentTheme Mode="Dark"/>
-      <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
+		<StyleInclude Source="avares://OxyPlot.Avalonia/Themes/Default.axaml"/>
+
+		<FluentTheme>
+			<FluentTheme.Palettes>
+				<!-- Palette for Light theme variant -->
+				<ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
+				<!-- Palette for Dark theme variant -->
+				<ColorPaletteResources x:Key="Dark" Accent="DarkGreen" RegionColor="Black" ErrorText="Yellow" />
+			</FluentTheme.Palettes>
+		</FluentTheme>
+
     </Application.Styles>
   <Application.Resources>
     <!--

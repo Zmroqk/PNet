@@ -63,8 +63,6 @@ namespace PNetClient
             set { SetValue(MenuButtonClickProperty, value); }
         }
 
-        public StackPanel SubmenuStack { get; set; }
-
         public MenuRow()
         {
             InitializeComponent();

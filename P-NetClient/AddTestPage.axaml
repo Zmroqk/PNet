@@ -35,13 +35,13 @@
              HorizontalContentAlignment="Right"
              VerticalContentAlignment="Center"
              />
-      <DropDown Grid.Column="1"
+      <ComboBox Grid.Column="1"
                 Grid.Row="1"
                 MaxWidth="250"
                 Width="250"
                 Margin="0,10,0,0"
                 PlaceholderText="Saved Tests"
-                Items="{Binding SavedHosts}"
+				ItemsSource="{Binding SavedHosts}"
                 SelectionChanged="OnSavedTestsSelectionChange"
                />
       <Button Grid.Column="1"

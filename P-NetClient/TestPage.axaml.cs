@@ -4,12 +4,12 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using OxyPlot;
-using OxyPlot.Avalonia;
 using PNetDll;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using PNetDll.Logging;
+using OxyPlot.Avalonia;
 
 namespace PNetClient
 {
@@ -18,19 +18,18 @@ namespace PNetClient
         public PingTestManager Manager { get; set; }
         public List<Logger> Loggers { get; set; }
         ListBox ListBox { get; set; }
-        Plot PingPlot { get; set; }
         public Button CallerButton { get; set; }
 
         public ObservableCollection<DataPoint> Values { get; set; }
 
         bool TestInitializationCompleted { get; set; }
 
-        public static readonly StyledProperty<string> TestNameProperty =
-            AvaloniaProperty.Register<MenuRow, string>(nameof(TestName));
+        public static readonly DirectPropertyBase<string> TestNameProperty =
+            AvaloniaProperty.RegisterDirect<TestPage, string>(nameof(TestName), x => x.TestName);
 
         public string TestName {
-            get { return GetValue(TestNameProperty); }
-            set { SetValue(TestNameProperty , $"Test for: {value}"); this.RaisePropertyChanged(TestNameProperty, null, _testName); } 
+            get { return _testName; }
+            set { SetAndRaise(TestNameProperty, ref _testName, $"Test for: {value}"); } 
         }
         string _testName;
 
@@ -42,7 +41,7 @@ namespace PNetClient
             PingPlot = this.Find<Plot>("PingPlot");
             Values = new ObservableCollection<DataPoint>();
             //PingPlot.Series.Add(new LineSeries() { Items = Values });
-            PingPlot.Series[0].Items = Values;
+            PingPlot.Series[0].ItemsSource = Values;
             PingPlot.ActualModel.Axes[0].MajorStep = 25;
             PingPlot.ActualModel.Axes[0].Title = "Index";
             PingPlot.ActualModel.Axes[1].MajorStep = 50;
@@ -70,7 +69,7 @@ namespace PNetClient
                         throw new System.Exception("Test failed to start");
                     }
                     Manager.History[pt].CollectionChanged += TestPage_CollectionChanged;
-                    ListBox.Items = Manager.PingTests;
+                    ListBox.ItemsSource = Manager.PingTests;
                     TestInitializationCompleted = true;
                 });
             });
